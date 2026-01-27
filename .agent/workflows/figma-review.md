@@ -13,7 +13,13 @@ This workflow performs a comprehensive analysis of a Figma design and extracts a
 
 ## Steps
 
-### 1. Activate Figma Analysis Skill
+### 1. Sync Project Context
+
+**Action**: Read `AGENTS.md` in the project root.
+
+- **Why**: To ensure analysis respects project-specific tech stack and coding conventions.
+
+### 2. Activate Figma Analysis Skill
 
 Read the figma-analysis skill to understand the extraction requirements:
 

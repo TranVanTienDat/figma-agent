@@ -12,7 +12,12 @@ Command: `/figma-build [section-name] [link selection]`
 
 ## Step-by-Step Instructions
 
-### 1. Data Gathering
+### 1. Sync Project Context
+
+- **Action**: Read `AGENTS.md` in the project root.
+- **Goal**: Identify framework (Next.js/React), styling (Tailwind/CSS), and preferred directory structure.
+
+### 2. Data Gathering
 
 - **Identify Path**: Locate the directory `figma-agent/[page-name]/section-[section-name]/`.
 - **Verify Data**:

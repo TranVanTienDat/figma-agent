@@ -7,7 +7,7 @@
 
 ## 🌟 Overview
 
-**@cam/figma-agent-int** automatically transforms Figma designs into structured data and production-ready code. It covers the entire lifecycle of UI implementation:
+**@cam/figma-agent** automatically transforms Figma designs into structured data and production-ready code. It covers the entire lifecycle of UI implementation:
 
 - ✅ **Design Tokens** - Global colors, typography, and effects extraction.
 - ✅ **Deep Data Extraction** - Exhaustive analysis of UI sections (Auto-layout, DOM, Overrides).
@@ -15,9 +15,46 @@
 - ✅ **Metadata Tracking** - Selection links saved directly into your project for traceability.
 - ✅ **Design-to-Code Audit** - Comparing code with Figma to reach pixel-perfection.
 
+## ⚙️ Quick Start & Installation
+
+### 1. Install Global CLI
+
+Run this command once to install the tool on your machine:
+
+```bash
+npm install -g @cam/figma-agent
+```
+
+### 2. Initialize Any Project
+
+To add Figma-to-Code capabilities to your current project, simply run:
+
+```bash
+figma-agent
+```
+
+_This command will copy the necessary AI Skills and Slash Commands into your project folder._
+
+### 1. Sync Project Context
+
+**Action**: Read `AGENTS.md` in the project root.
+
+- **Why**: To ensure analysis respects project-specific tech stack and coding conventions.
+
+### 2. Activate Figma Analysis Skill
+
+Ensure your `FigmaAIBridge` is configured with a valid token in your MCP settings (`~/.config/mcp/config.json`).
+
+---
+
 ## 🚀 Antigravity Workflow (The 4-Step Pipeline)
 
 This tool is optimized for **Antigravity**. Use these slash commands in your chat to move from design to code seamlessly.
+
+### Prerequisites
+
+- Figma file key and node ID separately
+- `AGENTS.md` file in project root (containing tech stack and coding rules)
 
 ### Step 1: Initialize Project Anatomy
 

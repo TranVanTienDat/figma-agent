@@ -136,7 +136,7 @@ figma-agent/
 │   │   └── text-presets.json      # Global font presets
 │   └── variants/                   # Global component variants
 │
-└── [page-name]/                    # Page-specific assets
+│── [page-name]/                    # Page-specific assets
     └── section-[name]/
         ├── data.json               # Exhaustive layout & children metadata
         ├── specs.md                # Technical implementation documentation

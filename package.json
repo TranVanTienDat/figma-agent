@@ -1,14 +1,14 @@
 {
-  "name": "@cam/figma-agent-int",
+  "name": "@cam/figma-agent",
   "version": "1.0.0",
   "description": "Figma analysis tool for Antigravity - Extract design specifications and convert to code-ready format",
   "main": "index.js",
   "scripts": {
-    "init": "node .agent/skills/figma-analysis/scripts/init-figma-agents.js",
+    "init": "node bin/figma-agent.js",
     "init:section": "node .agent/skills/figma-analysis/scripts/init-figma-agents.js"
   },
   "bin": {
-    "figma-init": ".agent/skills/figma-analysis/scripts/init-figma-agents.js"
+    "figma-agent": "bin/figma-agent.js"
   },
   "keywords": [
     "figma",

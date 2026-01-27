@@ -30,20 +30,29 @@ Ensure your `FigmaAIBridge` is linked to a valid Figma Personal Access Token.
 }
 ```
 
-### 2. Verify AI Skills
+### 2. Install Tool Globally (Recommended)
 
-Once the project is loaded, Antigravity identifies the following skills automatically:
-
-- `figma-analysis`: Extracts design logic.
-- `figma-to-code`: Generates React components.
-
-### 3. Initialize Metadata Folders
-
-Run the local script to establish the `figma-agent/` structure:
+Run the following command to make the tool available everywhere:
 
 ```bash
-npm run init
+npm install -g @cam/figma-agent
 ```
+
+_(Lưu ý: Nếu bạn đang ở local project này, bạn có thể chạy `npm link` để test thử lệnh `figma-agent`)_
+
+### 3. Initialize in Your New Project
+
+Mở terminal tại thư mục dự án mới của bạn và chạy:
+
+```bash
+figma-agent
+```
+
+Lệnh này sẽ tự động:
+
+1. Copy các AI Skills (figma-analysis, figma-to-code) vào dự án.
+2. Copy các Slash Commands (`/figma-review`, `/figma-build`, v.v.).
+3. Khởi tạo cấu trúc thư mục `figma-agent/` để lưu dữ liệu.
 
 ## 🎯 Usage Flow
 

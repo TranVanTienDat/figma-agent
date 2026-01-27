@@ -21,7 +21,11 @@ You are a Senior UI Engineer and System Analyst. When a user provides Figma data
   - Identify **letter-spacing** and **font-weights** (400, 500, 700).
 - **Effect Tokens**:
   - Identify **Multi-layer shadows** (detect if a shadow has multiple spread/blur values).
-  - Detect **Backdrop blurs** (glassmorphism).
+  - Detect **Backdrop blurs** (glassmorphism: `backdrop-filter`, `opacity`).
+  - **Glow Effects**: Identify inner glows or drop shadows used as light sources (high blur, high saturation).
+- **Premium Spacing**:
+  - Detect **Letter-spacing** adjustments (e.g., -1% to -2% for bold headings).
+  - Identify **Negative margins** or absolute positioning for overlapping elements.
 
 ### Step 2: Auto-Layout to CSS Mapping
 
@@ -114,6 +118,10 @@ Provide TSX/Tailwind skeleton with:
 - Accessibility attributes
 - Responsive classes
 - Component props interface
+- **Styling Best Practices**:
+  - Prefer **HSL** for colors to handle transparency and overlays easily.
+  - Use `backdrop-filter` for glassmorphic elements.
+  - Implement 1px semi-transparent borders for high-end "digital" feel.
 
 ## 💾 Data Storage Structure
 
@@ -221,6 +229,7 @@ figma-agent/
 - ✅ Include accessibility considerations (ARIA labels, keyboard navigation)
 - ✅ Note responsive breakpoints if applicable (mobile: 375px, tablet: 768px, desktop: 1440px)
 - ✅ Extract actual content (text, images) not just placeholders
+- ✅ **Premium Details**: Capture exact `letter-spacing`, `border-width` (often 1px), and `backdrop-blur` values.
 - ✅ Identify component instances and their overrides
 - ✅ Map Figma constraints to CSS positioning
 - ❌ Don't guess - if something is unclear, ask for clarification

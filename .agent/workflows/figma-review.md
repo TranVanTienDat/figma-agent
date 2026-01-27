@@ -192,6 +192,7 @@ figma-agent/
 - Always extract actual content, not placeholder text
 - Pay attention to component instances vs. master components
 - Document all interactive states (hover, focus, active)
+- **Check for High-End Details**: Look for `-1%` letter-spacing on titles, 1px borders, and backdrop blurs.
 - Note any animations or transitions
 - Include accessibility considerations
 - Be precise with measurements (don't round unnecessarily)

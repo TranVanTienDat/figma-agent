@@ -1,0 +1,31 @@
+{
+  "name": "@cam/figma-agent-int",
+  "version": "1.0.0",
+  "description": "Figma analysis tool for Antigravity - Extract design specifications and convert to code-ready format",
+  "main": "index.js",
+  "scripts": {
+    "init": "node .agent/skills/figma-analysis/scripts/init-figma-agents.js",
+    "init:section": "node .agent/skills/figma-analysis/scripts/init-figma-agents.js"
+  },
+  "bin": {
+    "figma-init": ".agent/skills/figma-analysis/scripts/init-figma-agents.js"
+  },
+  "keywords": [
+    "figma",
+    "design-tokens",
+    "design-system",
+    "antigravity",
+    "code-generation"
+  ],
+  "author": "Antigravity Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/figma-agent-int"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

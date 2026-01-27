@@ -1,0 +1,31 @@
+# Figma Agents - Extracted Data
+# This directory contains design specifications extracted from Figma
+
+# Don't commit extracted data (it's project-specific)
+.figma-agents/*/
+
+# But keep the common structure
+!.figma-agents/common/
+!.figma-agents/common/colors/
+!.figma-agents/common/typography/
+!.figma-agents/common/effects/
+!.figma-agents/common/components/
+!.figma-agents/common/variants/
+
+# Keep template files
+!.figma-agents/common/**/*.json
+
+# Ignore downloaded assets
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.webp
+
+# Ignore temporary files
+.DS_Store
+*.tmp
+*.cache
+
+# Node modules (if any)
+node_modules/

@@ -1,0 +1,10 @@
+node_modules/
+.DS_Store
+dist/
+build/
+.env
+*.log
+
+# Ignore actual extracted data but keep the directory structure if needed
+# figma-agent/*
+# !figma-agent/common/

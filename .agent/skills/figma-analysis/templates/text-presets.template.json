@@ -1,0 +1,74 @@
+{
+  "typography": {
+    "h1": {
+      "fontFamily": "Inter",
+      "fontSize": "48px",
+      "lineHeight": "56px",
+      "fontWeight": 700,
+      "letterSpacing": "-0.02em",
+      "textTransform": "none"
+    },
+    "h2": {
+      "fontFamily": "Inter",
+      "fontSize": "36px",
+      "lineHeight": "44px",
+      "fontWeight": 700,
+      "letterSpacing": "-0.01em",
+      "textTransform": "none"
+    },
+    "h3": {
+      "fontFamily": "Inter",
+      "fontSize": "24px",
+      "lineHeight": "32px",
+      "fontWeight": 600,
+      "letterSpacing": "0",
+      "textTransform": "none"
+    },
+    "h4": {
+      "fontFamily": "Inter",
+      "fontSize": "20px",
+      "lineHeight": "28px",
+      "fontWeight": 600,
+      "letterSpacing": "0",
+      "textTransform": "none"
+    },
+    "body": {
+      "fontFamily": "Inter",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "fontWeight": 400,
+      "letterSpacing": "0",
+      "textTransform": "none"
+    },
+    "body-sm": {
+      "fontFamily": "Inter",
+      "fontSize": "14px",
+      "lineHeight": "20px",
+      "fontWeight": 400,
+      "letterSpacing": "0",
+      "textTransform": "none"
+    },
+    "caption": {
+      "fontFamily": "Inter",
+      "fontSize": "12px",
+      "lineHeight": "16px",
+      "fontWeight": 400,
+      "letterSpacing": "0.01em",
+      "textTransform": "none"
+    },
+    "button": {
+      "fontFamily": "Inter",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "fontWeight": 500,
+      "letterSpacing": "0",
+      "textTransform": "none"
+    }
+  },
+  "fontFamilies": {
+    "primary": "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    "mono": "'Fira Code', 'Courier New', monospace"
+  },
+  "extracted_from": "Figma file",
+  "last_updated": "2026-01-27T20:25:35+07:00"
+}

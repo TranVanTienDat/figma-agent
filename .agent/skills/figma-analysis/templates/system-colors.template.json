@@ -1,0 +1,42 @@
+{
+  "colors": {
+    "brand": {
+      "primary-50": "#EFF6FF",
+      "primary-100": "#DBEAFE",
+      "primary-200": "#BFDBFE",
+      "primary-300": "#93C5FD",
+      "primary-400": "#60A5FA",
+      "primary-500": "#3B82F6",
+      "primary-600": "#2563EB",
+      "primary-700": "#1D4ED8",
+      "primary-800": "#1E40AF",
+      "primary-900": "#1E3A8A"
+    },
+    "neutral": {
+      "50": "#F9FAFB",
+      "100": "#F3F4F6",
+      "200": "#E5E7EB",
+      "300": "#D1D5DB",
+      "400": "#9CA3AF",
+      "500": "#6B7280",
+      "600": "#4B5563",
+      "700": "#374151",
+      "800": "#1F2937",
+      "900": "#111827"
+    },
+    "semantic": {
+      "success": "#10B981",
+      "warning": "#F59E0B",
+      "error": "#EF4444",
+      "info": "#3B82F6"
+    }
+  },
+  "usage": {
+    "primary-500": ["CTA buttons", "Links", "Active states"],
+    "neutral-900": ["Headings", "Body text"],
+    "neutral-600": ["Secondary text", "Captions"],
+    "neutral-100": ["Backgrounds", "Dividers"]
+  },
+  "extracted_from": "Figma file",
+  "last_updated": "2026-01-27T20:25:35+07:00"
+}

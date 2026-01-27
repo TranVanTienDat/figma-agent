@@ -1,0 +1,130 @@
+{
+  "sectionName": "Header",
+  "nodeId": "123:456",
+  "figmaUrl": "https://figma.com/file/ABC123?node-id=123:456",
+  "layout": {
+    "width": 1440,
+    "height": 80,
+    "padding": {
+      "top": 20,
+      "right": 40,
+      "bottom": 20,
+      "left": 40
+    },
+    "gap": 24,
+    "direction": "horizontal",
+    "alignment": "center",
+    "justifyContent": "space-between"
+  },
+  "children": [
+    {
+      "type": "INSTANCE",
+      "name": "Logo",
+      "componentId": "456:789",
+      "overrides": {
+        "text": "MyBrand",
+        "styles": {
+          "fill": "#000000",
+          "fontWeight": 700
+        }
+      },
+      "constraints": {
+        "horizontal": "MIN",
+        "vertical": "CENTER"
+      }
+    },
+    {
+      "type": "FRAME",
+      "name": "Navigation",
+      "style": {
+        "gap": 32
+      },
+      "children": [
+        {
+          "type": "TEXT",
+          "name": "Nav-Item",
+          "content": "Products",
+          "style": {
+            "fontFamily": "Inter",
+            "fontSize": 16,
+            "lineHeight": "24px",
+            "fontWeight": 500,
+            "letterSpacing": "0",
+            "color": "#374151"
+          }
+        },
+        {
+          "type": "TEXT",
+          "name": "Nav-Item",
+          "content": "Solutions",
+          "style": {
+            "fontFamily": "Inter",
+            "fontSize": 16,
+            "lineHeight": "24px",
+            "fontWeight": 500,
+            "letterSpacing": "0",
+            "color": "#374151"
+          }
+        },
+        {
+          "type": "TEXT",
+          "name": "Nav-Item",
+          "content": "Pricing",
+          "style": {
+            "fontFamily": "Inter",
+            "fontSize": 16,
+            "lineHeight": "24px",
+            "fontWeight": 500,
+            "letterSpacing": "0",
+            "color": "#374151"
+          }
+        }
+      ]
+    },
+    {
+      "type": "INSTANCE",
+      "name": "Button/Primary",
+      "componentId": "789:012",
+      "overrides": {
+        "text": "Get Started",
+        "styles": {
+          "backgroundColor": "#3B82F6",
+          "color": "#FFFFFF"
+        }
+      },
+      "constraints": {
+        "horizontal": "MAX",
+        "vertical": "CENTER"
+      }
+    }
+  ],
+  "vectors": [
+    {
+      "name": "Search-Icon",
+      "nodeId": "789:013",
+      "svgPath": "M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z",
+      "dimensions": {
+        "width": 24,
+        "height": 24
+      },
+      "fills": ["#6B7280"]
+    }
+  ],
+  "interactions": [
+    {
+      "trigger": "hover",
+      "target": "Nav-Item",
+      "action": "change-color",
+      "value": "#1F2937"
+    },
+    {
+      "trigger": "click",
+      "target": "Button/Primary",
+      "action": "navigate",
+      "value": "/signup"
+    }
+  ],
+  "audit_status": "Verified",
+  "last_updated": "2026-01-27T20:25:35+07:00",
+  "extracted_by": "figma-analysis-skill"
+}

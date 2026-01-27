@@ -1,0 +1,203 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Figma Section Data Schema",
+  "description": "Schema for extracted Figma section data",
+  "type": "object",
+  "required": ["sectionName", "nodeId", "layout", "children"],
+  "properties": {
+    "sectionName": {
+      "type": "string",
+      "description": "Name of the section (e.g., Header, Hero, Footer)"
+    },
+    "nodeId": {
+      "type": "string",
+      "pattern": "^I?\\d+[:|-]\\d+$",
+      "description": "Figma node ID in format 123:456"
+    },
+    "figmaUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Full Figma URL to this specific node"
+    },
+    "layout": {
+      "type": "object",
+      "required": ["width", "height"],
+      "properties": {
+        "width": {
+          "type": "number",
+          "description": "Width in pixels"
+        },
+        "height": {
+          "type": "number",
+          "description": "Height in pixels"
+        },
+        "padding": {
+          "type": "object",
+          "properties": {
+            "top": { "type": "number" },
+            "right": { "type": "number" },
+            "bottom": { "type": "number" },
+            "left": { "type": "number" }
+          }
+        },
+        "gap": {
+          "type": "number",
+          "description": "Gap between children (auto-layout)"
+        },
+        "direction": {
+          "type": "string",
+          "enum": ["horizontal", "vertical"],
+          "description": "Auto-layout direction"
+        },
+        "alignment": {
+          "type": "string",
+          "enum": ["start", "center", "end", "stretch"],
+          "description": "Cross-axis alignment"
+        },
+        "justifyContent": {
+          "type": "string",
+          "enum": [
+            "start",
+            "center",
+            "end",
+            "space-between",
+            "space-around",
+            "space-evenly"
+          ],
+          "description": "Main-axis alignment"
+        }
+      }
+    },
+    "children": {
+      "type": "array",
+      "description": "Child nodes in this section",
+      "items": {
+        "type": "object",
+        "required": ["type", "name"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "INSTANCE",
+              "TEXT",
+              "RECTANGLE",
+              "FRAME",
+              "GROUP",
+              "VECTOR",
+              "COMPONENT"
+            ],
+            "description": "Figma node type"
+          },
+          "name": {
+            "type": "string",
+            "description": "Node name from Figma"
+          },
+          "componentId": {
+            "type": "string",
+            "description": "Component ID if this is an instance"
+          },
+          "content": {
+            "type": "string",
+            "description": "Actual text content (for TEXT nodes)"
+          },
+          "overrides": {
+            "type": "object",
+            "description": "Component instance overrides",
+            "properties": {
+              "text": { "type": "string" },
+              "styles": { "type": "object" },
+              "visible": { "type": "boolean" }
+            }
+          },
+          "style": {
+            "type": "object",
+            "description": "Visual styles",
+            "properties": {
+              "fontFamily": { "type": "string" },
+              "fontSize": { "type": "number" },
+              "lineHeight": { "type": "string" },
+              "fontWeight": { "type": "number" },
+              "letterSpacing": { "type": "string" },
+              "color": { "type": "string" },
+              "backgroundColor": { "type": "string" },
+              "borderRadius": { "type": "number" },
+              "opacity": { "type": "number" }
+            }
+          },
+          "constraints": {
+            "type": "object",
+            "description": "Layout constraints",
+            "properties": {
+              "horizontal": {
+                "type": "string",
+                "enum": ["MIN", "CENTER", "MAX", "STRETCH", "SCALE"]
+              },
+              "vertical": {
+                "type": "string",
+                "enum": ["MIN", "CENTER", "MAX", "STRETCH", "SCALE"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "vectors": {
+      "type": "array",
+      "description": "Vector graphics (icons, illustrations)",
+      "items": {
+        "type": "object",
+        "required": ["name", "nodeId"],
+        "properties": {
+          "name": { "type": "string" },
+          "nodeId": { "type": "string" },
+          "svgPath": { "type": "string" },
+          "dimensions": {
+            "type": "object",
+            "properties": {
+              "width": { "type": "number" },
+              "height": { "type": "number" }
+            }
+          },
+          "fills": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    },
+    "interactions": {
+      "type": "array",
+      "description": "Interactive behaviors",
+      "items": {
+        "type": "object",
+        "required": ["trigger", "target", "action"],
+        "properties": {
+          "trigger": {
+            "type": "string",
+            "enum": ["click", "hover", "focus", "scroll"]
+          },
+          "target": { "type": "string" },
+          "action": {
+            "type": "string",
+            "enum": ["navigate", "change-color", "show", "hide", "animate"]
+          },
+          "value": { "type": "string" }
+        }
+      }
+    },
+    "audit_status": {
+      "type": "string",
+      "enum": ["Pending", "Verified", "Needs Review"],
+      "description": "Verification status"
+    },
+    "last_updated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last extraction timestamp"
+    },
+    "extracted_by": {
+      "type": "string",
+      "description": "Tool/skill that performed extraction"
+    }
+  }
+}

@@ -3,7 +3,7 @@
 > 🎨 A comprehensive Figma-to-code extraction system for Antigravity, specifically designed for professional developer workflows.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org)
+[![Node Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org)
 
 ## 🌟 Overview
 

@@ -6,7 +6,7 @@ Complete setup manual for the **@cam/figma-agent-int** toolset.
 
 - **Antigravity AI**: Professional agentic coding assistant.
 - **MCP Server**: `FigmaAIBridge` must be configured.
-- **Node.js**: v16+ (recommended).
+- **Node.js**: v18.0.0 or higher
 
 ## 🚀 Step-by-Step Installation
 

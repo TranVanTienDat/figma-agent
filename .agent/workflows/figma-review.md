@@ -6,10 +6,12 @@ description: Figma architect analysis - Extract complete design specifications f
 
 This workflow performs a comprehensive analysis of a Figma design and extracts all necessary data for implementation.
 
-## Prerequisites
+## 🛡️ Permanent Guardrails
 
-- Figma file URL with node-id parameter (e.g., `https://figma.com/file/ABC123?node-id=123:456`)
-- OR Figma file key and node ID separately
+This workflow operates under strict security and accuracy protocols defined in `.agent/skills/figma-analysis/SKILL.md`:
+
+1.  **Figma-Only Access**: No external links are permitted.
+2.  **Exhaustive Deep Dive**: Recursive scanning with visual verification via screenshots.
 
 ## Steps
 
@@ -35,18 +37,36 @@ Ask the user for:
 - Specific node ID (if analyzing a specific frame/section)
 - Page name for organizing extracted data
 
-### 3. Fetch Figma Data
+### 3. Fetch Figma Data (Exhaustive Mode)
 
-Use the MCP Figma tool to fetch design data:
+**Security Reminder**: You are strictly prohibited from accessing any non-Figma URLs during this process.
+
+Use the MCP Figma tool to fetch design data recursively:
 
 ```
 Tool: mcp_FigmaAIBridge_get_figma_data
 Parameters:
-  - fileKey: [extracted from URL or provided]
-  - nodeId: [specific node or omit for full file]
+  - fileKey: [extracted]
+  - nodeId: [specific node]
+  - depth: [Full traversal to leaves]
 ```
 
-### 4. Analyze and Save Design Tokens (MANDATORY EXECUTION)
+### 4. Recursive Scan & Data Point Extraction
+
+Follow the **Phase 1 & 2** of the Exhaustive Deep Dive protocol:
+
+- Discard hidden nodes.
+- Extract Text Overrides, Font Styles, Component Properties, and Auto-Layout specs.
+
+### 5. Visual Verification (Phase 3)
+
+**MANDATORY**: Cross-check data against visual reality.
+
+1.  **Get Screenshot**: Use `get_screenshot` for the target node.
+2.  **Compare**: Ensure text content and icons match your JSON data.
+3.  **Resolve**: If data shows `Button` but screenshot shows `Submit`, re-scan the subtree.
+
+### 6. Analyze and Save Design Tokens (MANDATORY EXECUTION)
 
 You **MUST** extract the following design tokens and physically save them as JSON files in the `common/` directory.
 
@@ -73,7 +93,7 @@ You **MUST** extract the following design tokens and physically save them as JSO
 
 > **Note**: As an agent, you must execute these tool calls immediately. Do not just show the code block to the user.
 
-### 5. Identify Components
+### 7. Identify Components
 
 **Global Components:**
 
@@ -88,7 +108,7 @@ You **MUST** extract the following design tokens and physically save them as JSO
 - Identify section-specific components
 - Generate boilerplate code in `figma-agent/[page-name]/section-[name]/components/local-component.tsx`
 
-### 6. identify and Create Section Folders (MANDATORY)
+### 8. Identify and Create Section Folders (MANDATORY)
 
 You **MUST** physically create the directory structure on the disk. Do not just describe it.
 
@@ -106,14 +126,14 @@ You **MUST** physically create the directory structure on the disk. Do not just 
 
 3. **Verify Creation**: Using `list_dir`, verify that `figma-agent/[page-name]/[section-name]` exists.
 
-### 7. Identify Visual Assets
+### 9. Identify Visual Assets
 
 Identify all image and icon nodes that will be needed for implementation.
 
 - List their node IDs and intended filenames in `specs.md`.
 - **DO NOT** download them now. They will be fetched during the `@figma-build` phase to keep the review process lean.
 
-### 8. Generate Specifications
+### 10. Generate Specifications
 
 Create `specs.md` for each section with:
 
@@ -124,11 +144,11 @@ Create `specs.md` for each section with:
 - Implementation hints
 - **Assets Manifest**: List all image/icon nodes with their IDs and proposed file names.
 
-### 9. Create Implementation Blueprint
+### 11. Create Implementation Blueprint
 
 Generate a comprehensive report and **Verify** that all folders were created on the filesystem.
 
-### 10. Verify Extraction
+### 12. Verify Extraction (Audit)
 
 Cross-check:
 

@@ -6,38 +6,42 @@ description: Get figma information - Quick extraction of basic Figma file data
 
 Quick workflow to fetch basic information from a Figma file or perform a targeted deep-dive for a specific section.
 
-## Usage Modes
+## 🛡️ Permanent Guardrails
 
-1. **General Preview**: Run `/get-figma-info [link]` to see the file structure.
-2. **Targeted Extraction**: Run `/get-figma-info [section-name] [link selection]` to extract data for a specific section.
+This workflow operates under strict security and accuracy protocols defined in `.agent/skills/figma-analysis/SKILL.md`:
+
+1.  **Figma-Only Access**: No external links are permitted.
+2.  **Exhaustive Deep Dive Mode**: Continuous recursive scanning until leaf nodes are reached. Zero guessing.
 
 ## Steps
 
 ### 1. Identify Target
 
 - If a **section-name** and **link selection** (URL with `node-id`) are provided:
-  - Proceed to **Targeted Extraction**.
+  - Proceed to **Targeted Extraction (Exhaustive Deep Dive)**.
 - Otherwise, proceed to **General Preview**.
 
-### 2. Targeted Extraction (Write to Data.json)
+### 2. Targeted Extraction (Exhaustive Deep Dive)
 
-If targeted, perform the following:
+If targeted, perform the following strict protocol:
 
-1. **Extract Identifiers**:
-   - `fileKey`: From URL
-   - `nodeId`: From `node-id` parameter in URL
-   - `page-name`: Identify the Figma page name from the data
+1.  **Phase 1: Recursive X-Ray Scan**:
+    - Use `mcp_FigmaAIBridge_get_figma_data` with `nodeId` and **Full Depth** traversal.
+    - Reach all "leaves" (Text, Vector, Boolean).
+    - Discard all `hidden == true` nodes.
 
-2. **Fetch Deep Data**:
-   - Use `mcp_FigmaAIBridge_get_figma_data` with `nodeId` and `depth: 20` (Exhaustive Deep Dive).
+2.  **Phase 2: Data Point extraction**:
+    - Extract Text Overrides (actual strings), Typography styles, Component Variants/Properties, and Auto-Layout specs.
 
-3. **Save to File Structure**:
-   - Directory: `figma-agent/[page-name]/section-[section-name]/`
-   - File: `data.json`
-   - Content: Full JSON structure including layout, children, and properties.
+3.  **Phase 3: Visual Verification (Audit)**:
+    - **MANDATORY**: Run `get_screenshot` for the target frame.
+    - Compare text/icons in image vs. JSON data.
+    - If mismatch found, re-scan subtree immediately.
 
-4. **Verify Metadata**:
-   - Ensure `audit_status` is set to "Extracted" in the JSON.
+4.  **Save to File Structure**:
+    - Directory: `figma-agent/[page-name]/section-[section-name]/`
+    - File: `data.json`
+    - Metadata: Set `audit_status: "Verified"` after successful comparison.
 
 ### 3. General Preview (Default)
 

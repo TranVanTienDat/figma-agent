@@ -143,30 +143,20 @@ All extracted data will be saved to `figma-agent/` following this structure:
 
 ```
 figma-agent/
-├── common/
+├── common/                         # Shared Design System
+|-- |-- component
 │   ├── colors/
-│   │   └── system-colors.json
-│   ├── components/
-│   │   ├── Button/
-│   │   │   ├── data.json
-│   │   │   └── variants.json
-│   │   └── Icon/
-│   │       └── data.json
-│   ├── variants/
-│   │   └── global-variants.json    # Global variant information
-│   └── typography/
-│       └── text-presets.json
+│   │   └── system-colors.json      # Global color tokens
+│   ├── typography/
+│   │   └── text-presets.json      # Global font presets
+│   └── variants/                   # Global component variants
 │
-└── [page-name]/
-    └── section-[name]/             # Example: section-header, section-hero
-        ├── data.json               # <--- FOCUS: Result from Exhaustive Deep Dive
-        ├── colors/
-        │   └── section-tokens.json
-        ├── components/
-        │   └── local-component.tsx # Boilerplate code for internal components
-        ├── images/
-        │   └── vector-icons.svg
-        └── specs.md                # Detailed technical documentation
+└── [page-name]/                    # Page-specific assets (e.g., landingpage)
+    └── section-[name]/             # Examples: header-hero, stats-features, pricing, testimonials, footer
+        ├── data.json               # Exhaustive layout & children metadata
+        ├── specs.md                # Technical implementation documentation
+        ├── components/             # Generated .tsx components (local to section)
+        └── images/                 # Downloaded SVG/PNG assets
 ```
 
 ## 📝 data.json Schema

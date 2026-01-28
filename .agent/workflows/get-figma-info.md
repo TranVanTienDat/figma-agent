@@ -58,7 +58,8 @@ When Targeted Extraction is used, it creates/updates:
 figma-agent/
 └── [page-name]/
     └── section-[section-name]/
-        └── data.json  <-- Populated with deep-dive data
+        ├── data.json               # Populated with deep-dive data
+        └── ...                     # Other section assets
 ```
 
 ## Output

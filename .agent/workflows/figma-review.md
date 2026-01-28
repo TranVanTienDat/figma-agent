@@ -83,21 +83,19 @@ Extract and organize:
 - Identify section-specific components
 - Generate boilerplate code in `figma-agent/[page-name]/section-[name]/components/local-component.tsx`
 
-### 6. Extract Section Documents
+### 6. identify and Create Section Folders
 
-For each major section/frame identified:
+For each logical section identified in the design (e.g., Header, Hero, Features, Pricing, Footer):
 
-1. Create directory: `figma-agent/[page-name]/section-[name]/`
-2. Prepare `specs.md` with:
-   - Layout overview (dimensions, spacing)
-   - Component breakdown
-   - Interaction states
-3. Identify section-specific colors and save to `colors/section-tokens.json`
-4. _Note: data.json will be populated separately using `/get-figma-info [section-name] [link selection]`_
+1. **Identify Sections**: Look for top-level frames or logical groups in the Figma tree.
+2. **Create Directory**: `figma-agent/[page-name]/section-[name]/` (e.g., `figma-agent/landingpage/header-hero/`).
+3. **Generate specs.md**: Create detailed technical documentation for the section.
+4. **Initialize data.json**: Extract the node metadata for this section and save it.
+5. **Setup sub-folders**: Create `components/` and `images/` folders within the section directory.
 
 ### 7. Download Visual Assets
 
-Extract vectors and images:
+Extract vectors and images for each section:
 
 ```
 Tool: mcp_FigmaAIBridge_download_figma_images
@@ -105,7 +103,7 @@ Parameters:
   - fileKey: [file key]
   - nodes: [array of image/icon node IDs]
   - localPath: figma-agent/[page-name]/section-[name]/images/
-  - pngScale: 2 (for raster images)
+  - pngScale: 2
 ```
 
 ### 8. Generate Specifications
@@ -167,30 +165,19 @@ After completion, you should have:
 
 ```
 figma-agent/
-├── common/
+├── common/                         # Shared Design System
 │   ├── colors/
-│   │   └── system-colors.json
-│   ├── components/
-│   │   ├── Button/
-│   │   │   ├── data.json
-│   │   │   └── variants.json
-│   │   └── Icon/
-│   │       └── data.json
-│   ├── variants/
-│   │   └── global-variants.json    # Global variant information
-│   └── typography/
-│       └── text-presets.json
+│   │   └── system-colors.json      # Global color tokens
+│   ├── typography/
+│   │   └── text-presets.json      # Global font presets
+│   └── variants/                   # Global component variants
 │
-└── [page-name]/
-    └── section-[name]/             # Example: section-header, section-hero
-        ├── data.json               # <--- FOCUS: Result from Exhaustive Deep Dive
-        ├── colors/
-        │   └── section-tokens.json
-        ├── components/
-        │   └── local-component.tsx
-        ├── images/
-        │   └── vector-icons.svg
-        └── specs.md
+└── [page-name]/                    # Page-specific assets (e.g., landingpage)
+    └── section-[name]/             # Example: header-hero, features, footer
+        ├── data.json               # Exhaustive layout & children metadata
+        ├── specs.md                # Technical implementation documentation
+        ├── components/             # Generated .tsx components (local to section)
+        └── images/                 # Downloaded SVG/PNG assets
 ```
 
 ## Tips

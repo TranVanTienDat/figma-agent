@@ -22,7 +22,15 @@
 Run this command once to install the tool on your machine:
 
 ```bash
-npm install -g @cam/figma-agent
+npm install -g git+https://github.com/TranVanTienDat/figma-agent.git
+```
+
+**Alternative:** Clone and link locally:
+
+```bash
+git clone https://github.com/TranVanTienDat/figma-agent.git
+cd figma-agent
+npm link
 ```
 
 ### 2. Initialize Any Project

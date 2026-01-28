@@ -35,10 +35,16 @@ Ensure your `FigmaAIBridge` is linked to a valid Figma Personal Access Token.
 Run the following command to make the tool available everywhere:
 
 ```bash
-npm install -g @cam/figma-agent
+npm install -g git+https://github.com/TranVanTienDat/figma-agent.git
 ```
 
-_(Lưu ý: Nếu bạn đang ở local project này, bạn có thể chạy `npm link` để test thử lệnh `figma-agent`)_
+**Alternative Method** - Clone and link locally:
+
+```bash
+git clone https://github.com/TranVanTienDat/figma-agent.git
+cd figma-agent
+npm link
+```
 
 ### 3. Initialize in Your New Project
 

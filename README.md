@@ -59,42 +59,44 @@ Ensure your `FigmaAIBridge` is configured with a valid token in your MCP setting
 
 ---
 
-## 🚀 Antigravity Workflow (The 4-Step Pipeline)
+## 🚀 Antigravity Workflow (The 5-Step Pipeline)
 
 This tool is optimized for **Antigravity**. Use these slash commands in your chat to move from design to code seamlessly.
 
-### Prerequisites
+### Step 1: Initialize Project Context
 
-- Figma file key and node ID separately
-- `AGENTS.md` file in project root (containing tech stack and coding rules)
+**Command:** `/figma-init`
 
-### Step 1: Initialize Project Anatomy
+- **Action**: Creates the mandatory `AGENTS.md` file in the project root.
+- **Result**: Establishes your tech stack (Next.js, Tailwind, etc.) and coding standards as the Single Source of Truth for all subsequent AI actions.
+
+### Step 2: Extract Design Anatomy
 
 **Command:** `/figma-review [figma_url]`
 
-- **Action**: Establishes the `figma-agent/` directory.
-- **Result**: Extracts global colors, typography, and basic section skeletons (`specs.md`).
+- **Action**: Establishes the `figma-agent/` directory based on the `AGENTS.md` context.
+- **Result**: Extracts global tokens (colors, typography) and creates organized section folders (Header, Hero, Features, etc.) with `specs.md`.
 
-### Step 2: Exhaustive Deep Dive
+### Step 3: Exhaustive Deep Dive
 
 **Command:** `/get-figma-info [section_name] [selection_link]`
 
-- **Action**: Bypasses default component data to capture actual overrides and pixel-precise layout.
+- **Action**: Captures actual overrides and pixel-precise layout for a specific section.
 - **Result**: Populates `figma-agent/[page]/section-[name]/data.json`.
 
-### Step 3: Architect the Code
+### Step 4: Architect the Code
 
 **Command:** `/figma-build [section_name] [link selection]`
 
-- **Action**: Triggers the `figma-to-code` AI architect.
-- **Result**: Generates a professional React/Next.js component in your project files.
+- **Action**: Triggers the `figma-to-code` AI architect to build production code.
+- **Result**: Generates a professional React/Next.js component following the rules in `AGENTS.md`.
 
-### Step 4: Pixel-Perfect Audit
+### Step 5: Pixel-Perfect Audit
 
-**Command:** `/figma-audit [section_name] [link selection]`
+**Command:** `/figma-audit [section_name] [selection_link]`
 
-- **Action**: Compares your code against the latest Figma selection.
-- **Result**: Refinement plan to fix spacing, tokens, or content mismatches.
+- **Action**: Compares existing code against Figma selection.
+- **Result**: Actionable plan to reach 100% pixel-perfection.
 
 ## 💻 Developer Integration Guide
 
@@ -148,11 +150,11 @@ figma-agent/
 │   │   └── text-presets.json      # Global font presets
 │   └── variants/                   # Global component variants
 │
-│── [page-name]/                    # Page-specific assets
-    └── section-[name]/
+└── [page-name]/                    # Page-specific assets (e.g., landingpage)
+    └── section-[name]/             # Examples: header-hero, stats-features
         ├── data.json               # Exhaustive layout & children metadata
         ├── specs.md                # Technical implementation documentation
-        ├── components/             # Generated .tsx components
+        ├── components/             # Generated .tsx components (local to section)
         └── images/                 # Downloaded SVG/PNG assets
 ```
 

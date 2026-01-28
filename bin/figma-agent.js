@@ -39,7 +39,7 @@ function copyDir(src, dest) {
 }
 
 async function main() {
-  console.log("\n🚀 Starting @cam/figma-agent installation...\n");
+  console.log("\n🚀 Starting @ckim03/figma-agent installation...\n");
 
   // 1. Check if we are in a valid directory
   if (fs.existsSync(path.join(targetDir, ".agent"))) {

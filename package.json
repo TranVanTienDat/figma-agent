@@ -1,6 +1,6 @@
 {
   "name": "@ckim03/figma-agent",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Figma analysis tool for Antigravity - Extract design specifications and convert to code-ready format",
   "main": "index.js",
   "scripts": {

@@ -8,23 +8,29 @@ This workflow sets up the mandatory `AGENTS.md` file which serves as the Single 
 
 ## Steps
 
-### 1. Gather Project Information
+### 1. Check for Existing Context
 
-Ask the user for the following details:
+**Action**: Check if `AGENTS.md` already exists in the project root.
+
+- **If it exists**: Inform the user that the project is already initialized. Skip to the end or ask if they want to see the current configuration.
+- **If it DOES NOT exist**: Proceed to the next steps.
+
+### 2. Gather Project Information
+
+If `AGENTS.md` is missing, ask the user for the following details:
 
 - **Project Name & Description**: What is this project about?
 - **Tech Stack**:
   - Framework (e.g., Next.js, Vite, React)
   - Language (TypeScript/JavaScript)
+  - UI framwork (antd, Mui/joy,...)
   - Styling (Vanilla CSS, Tailwind, SCSS, etc.)
   - Component Library (Radix UI, Shadcn, etc.)
   - Icons (Lucide, Phosphor, etc.)
 - **Folder Structure**: Preferred organization for components, assets, etc.
 - **Coding Standards**: Linting rules, naming conventions (PascalCase for components, etc.)
 
-### 2. Create AGENTS.md
-
-Generate the `AGENTS.md` file in the project root with the following template:
+### 3. Create AGENTS.md
 
 ```markdown
 # Project Context: [Project Name]
@@ -63,7 +69,7 @@ Generate the `AGENTS.md` file in the project root with the following template:
 - Prioritize pixel-perfection based on `specs.md`.
 ```
 
-### 3. Verify and Confirm
+### 4. Verify and Confirm
 
 - Show the generated `AGENTS.md` to the user.
 - Confirm if any adjustments are needed.

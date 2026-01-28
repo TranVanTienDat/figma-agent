@@ -144,15 +144,16 @@ All extracted data will be saved to `figma-agent/` following this structure:
 ```
 figma-agent/
 ├── common/                         # Shared Design System
-|-- |-- component
 │   ├── colors/
 │   │   └── system-colors.json      # Global color tokens
 │   ├── typography/
 │   │   └── text-presets.json      # Global font presets
+│   ├── styles/
+│   │   └── effects.json           # Glassmorphism, Glows, Radial Gradients
 │   └── variants/                   # Global component variants
 │
-└── [page-name]/                    # Page-specific assets (e.g., landingpage)
-    └── section-[name]/             # Examples: header-hero, stats-features, pricing, testimonials, footer
+└── [page-name]/                    # Page-specific assets (e.g., landing-page)
+    └── [section-name]/             # Examples: header-nav, hero-section, features-grid, footer
         ├── data.json               # Exhaustive layout & children metadata
         ├── specs.md                # Technical implementation documentation
         ├── components/             # Generated .tsx components (local to section)

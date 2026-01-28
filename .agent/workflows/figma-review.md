@@ -46,28 +46,32 @@ Parameters:
   - nodeId: [specific node or omit for full file]
 ```
 
-### 4. Analyze Design Tokens
+### 4. Analyze and Save Design Tokens (MANDATORY EXECUTION)
 
-Extract and organize:
+You **MUST** extract the following design tokens and physically save them as JSON files in the `common/` directory.
 
-**Colors:**
+**1. System Colors:**
 
-- Parse all fill colors from nodes
-- Group by usage (brand, neutral, semantic)
-- Convert to HSL and Hex
-- Save to `figma-agent/common/colors/system-colors.json`
+- **Action**: Use `write_to_file` to create/update `figma-agent/common/colors/system-colors.json`.
+- Include brand colors, background (#0B0121, etc.), and text colors.
 
-**Typography:**
+**2. Typography Presets:**
 
-- Extract font families, sizes, weights
-- Calculate line heights and letter spacing
-- Create presets (H1, H2, Body, Caption, etc.)
-- Save to `figma-agent/common/typography/text-presets.json`
+- **Action**: Use `write_to_file` to create/update `figma-agent/common/typography/text-presets.json`.
+- Include H1-H6, Body, and UI Label presets.
 
-**Global Variants:**
+**3. Effects & Premium Details:**
 
-- Identify common component states and variations
-- Save to `figma-agent/common/variants/global-variants.json`
+- **Action**: Use `write_to_file` to create/update `figma-agent/common/styles/effects.json`.
+- Include Glassmorphism and Radial Glow rules.
+
+**4. Global Variants:**
+
+- **Action**: Use `write_to_file` to create/update `figma-agent/common/variants/global-variants.json`.
+
+// turbo
+
+> **Note**: As an agent, you must execute these tool calls immediately. Do not just show the code block to the user.
 
 ### 5. Identify Components
 
@@ -83,26 +87,34 @@ Extract and organize:
 - Identify section-specific components
 - Generate boilerplate code in `figma-agent/[page-name]/section-[name]/components/local-component.tsx`
 
-### 6. identify and Create Section Folders
+### 6. identify and Create Section Folders (MANDATORY)
 
-For each logical section identified in the design (e.g., Header, Hero, Features, Pricing, Footer):
+You **MUST** physically create the directory structure on the disk. Do not just describe it.
 
-1. **Identify Sections**: Look for top-level frames or logical groups in the Figma tree.
-2. **Create Directory**: `figma-agent/[page-name]/section-[name]/` (e.g., `figma-agent/landingpage/header-hero/`).
-3. **Generate specs.md**: Create detailed technical documentation for the section.
-4. **Initialize data.json**: Extract the node metadata for this section and save it.
-5. **Setup sub-folders**: Create `components/` and `images/` folders within the section directory.
+1. **Identify Sections**: Look for top-level frames (e.g., `header-nav`, `hero-section`, `features-grid`).
+2. **Execute Initialization**: For each identified section, run the initialization script via the `run_command` tool.
+
+   // turbo
+
+   ```bash
+   # Syntax: node .agent/skills/figma-analysis/scripts/init-figma-agents.js [page-name] [section-name]
+   # Example:
+   node .agent/skills/figma-analysis/scripts/init-figma-agents.js landing-page header-nav
+   node .agent/skills/figma-analysis/scripts/init-figma-agents.js landing-page hero-section
+   ```
+
+3. **Verify Creation**: Using `list_dir`, verify that `figma-agent/[page-name]/[section-name]` exists.
 
 ### 7. Download Visual Assets
 
-Extract vectors and images for each section:
+Extract vectors and images for each section and save them into the newly created folders:
 
 ```
 Tool: mcp_FigmaAIBridge_download_figma_images
 Parameters:
   - fileKey: [file key]
   - nodes: [array of image/icon node IDs]
-  - localPath: figma-agent/[page-name]/section-[name]/images/
+  - localPath: figma-agent/[page-name]/[section-name]/images/
   - pngScale: 2
 ```
 
@@ -118,34 +130,7 @@ Create `specs.md` for each section with:
 
 ### 9. Create Implementation Blueprint
 
-Generate a comprehensive report including:
-
-1. **Executive Summary**
-   - Total sections analyzed
-   - Components identified
-   - Color palette size
-   - Estimated implementation complexity
-
-2. **Architecture Tree**
-   - Recommended file structure
-   - Component organization
-   - Asset locations
-
-3. **Token Tables**
-   - Colors with usage
-   - Typography presets
-   - Spacing scale
-   - Shadow definitions
-
-4. **Component Specifications**
-   - Props interface
-   - State variations
-   - Accessibility requirements
-
-5. **Code Starters**
-   - TSX component skeletons
-   - Tailwind/CSS classes
-   - Type definitions
+Generate a comprehensive report and **Verify** that all folders were created on the filesystem.
 
 ### 10. Verify Extraction
 
@@ -170,10 +155,12 @@ figma-agent/
 │   │   └── system-colors.json      # Global color tokens
 │   ├── typography/
 │   │   └── text-presets.json      # Global font presets
+│   ├── styles/
+│   │   └── effects.json           # Glassmorphism, Glows, Radiad Gradients
 │   └── variants/                   # Global component variants
 │
-└── [page-name]/                    # Page-specific assets (e.g., landingpage)
-    └── section-[name]/             # Example: header-hero, features, footer
+└── [page-name]/                    # Page-specific assets (e.g., landing-page)
+    └── [section-name]/             # Examples: header-nav, hero-section, features-grid, footer
         ├── data.json               # Exhaustive layout & children metadata
         ├── specs.md                # Technical implementation documentation
         ├── components/             # Generated .tsx components (local to section)

@@ -52,7 +52,7 @@ function initCommonStructure() {
   ensureDir(path.join(baseDir, "common"));
   ensureDir(path.join(baseDir, "common", "colors"));
   ensureDir(path.join(baseDir, "common", "typography"));
-  ensureDir(path.join(baseDir, "common", "effects"));
+  ensureDir(path.join(baseDir, "common", "styles")); // Updated: unified styles folder
   ensureDir(path.join(baseDir, "common", "components"));
   ensureDir(path.join(baseDir, "common", "variants"));
 
@@ -75,6 +75,15 @@ function initCommonStructure() {
     last_updated: new Date().toISOString(),
   };
 
+  const effectsTemplate = {
+    effects: {
+      glassmorphism: {},
+      glows: {},
+      gradients: {},
+    },
+    last_updated: new Date().toISOString(),
+  };
+
   const variantsTemplate = {
     variants: {},
     last_updated: new Date().toISOString(),
@@ -91,6 +100,11 @@ function initCommonStructure() {
   );
 
   createTemplateFile(
+    path.join(baseDir, "common", "styles", "effects.json"),
+    effectsTemplate,
+  );
+
+  createTemplateFile(
     path.join(baseDir, "common", "variants", "global-variants.json"),
     variantsTemplate,
   );
@@ -102,11 +116,11 @@ function initCommonStructure() {
 function initSectionStructure(page, section) {
   console.log(`\n📁 Initializing section: ${page}/${section}...\n`);
 
-  const sectionDir = path.join(baseDir, page, `section-${section}`);
+  // Removed "section-" prefix for cleaner naming
+  const sectionDir = path.join(baseDir, page, section);
 
   // Section directories
   ensureDir(sectionDir);
-  ensureDir(path.join(sectionDir, "colors"));
   ensureDir(path.join(sectionDir, "components"));
   ensureDir(path.join(sectionDir, "images"));
 

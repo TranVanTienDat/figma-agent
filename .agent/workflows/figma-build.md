@@ -25,24 +25,32 @@ Command: `/figma-build [section-name] [link selection]`
   - Read `section-tokens.json` (Local colors/fonts).
   - Read `common/` (Global token system).
 
-### 2. Activate Coding Skill & Metadata
+### 3. Activate Coding Skill & Metadata
 
 - **Save Link**: Record the `link selection` into `data.json` and update `specs.md` for traceability.
 - Read `figma-to-code/SKILL.md` to apply professional coding standards.
 
-### 3. DOM Structure Analysis
+### 4. Download Visual Assets
+
+**Action**: Use the `mcp_FigmaAIBridge_download_figma_images` tool to fetch images/icons identified in Step 2.
+
+- **Source**: Get node IDs from the Asset Manifest in `specs.md` or from `data.json`.
+- **Destination**: `figma-agent/[page-name]/section-[section-name]/images/`.
+- **Note**: This directory should be created now if it doesn't exist.
+
+### 5. DOM Structure Analysis
 
 - Traverse the `children` tree in `data.json`.
 - Identify sub-components that need to be extracted.
 - Map icons/images from the `images/` directory.
 
-### 4. Code Generation
+### 6. Code Generation
 
 - Create the main component file (e.g., `src/components/sections/[SectionName].tsx`).
 - Integrate Layout properties (Flex, Gap, Padding) from JSON.
 - Apply interaction states from `specs.md`.
 
-### 5. Verification & Finalization
+### 7. Verification & Finalization
 
 - Check if the code correctly uses Design Token variables.
 - Ensure image paths (`src`) point to the correct project asset directories.

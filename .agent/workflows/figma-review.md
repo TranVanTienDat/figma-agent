@@ -81,6 +81,7 @@ You **MUST** extract the following design tokens and physically save them as JSO
 - Extract variants and properties
 - Document states (hover, active, disabled)
 - Save to `figma-agent/common/components/[ComponentName]/data.json`
+- **Metadata Requirement**: `data.json` must include `frame` info (width, height, absolute position) and a deep `children` tree representing the full node hierarchy.
 
 **Local Components:**
 
@@ -105,18 +106,12 @@ You **MUST** physically create the directory structure on the disk. Do not just 
 
 3. **Verify Creation**: Using `list_dir`, verify that `figma-agent/[page-name]/[section-name]` exists.
 
-### 7. Download Visual Assets
+### 7. Identify Visual Assets
 
-Extract vectors and images for each section and save them into the newly created folders:
+Identify all image and icon nodes that will be needed for implementation.
 
-```
-Tool: mcp_FigmaAIBridge_download_figma_images
-Parameters:
-  - fileKey: [file key]
-  - nodes: [array of image/icon node IDs]
-  - localPath: figma-agent/[page-name]/[section-name]/images/
-  - pngScale: 2
-```
+- List their node IDs and intended filenames in `specs.md`.
+- **DO NOT** download them now. They will be fetched during the `@figma-build` phase to keep the review process lean.
 
 ### 8. Generate Specifications
 
@@ -127,6 +122,7 @@ Create `specs.md` for each section with:
 - Interaction states
 - Responsive behavior notes
 - Implementation hints
+- **Assets Manifest**: List all image/icon nodes with their IDs and proposed file names.
 
 ### 9. Create Implementation Blueprint
 
@@ -140,7 +136,7 @@ Cross-check:
 - Component overrides are captured
 - Colors match visual design
 - Measurements are accurate
-- Assets are downloaded correctly
+- Metadata includes complete `frame` (dimensions/position) and `children` tree.
 
 Set `audit_status: "Verified"` in data.json files
 
@@ -161,10 +157,9 @@ figma-agent/
 │
 └── [page-name]/                    # Page-specific assets (e.g., landing-page)
     └── [section-name]/             # Examples: header-nav, hero-section, features-grid, footer
-        ├── data.json               # Exhaustive layout & children metadata
-        ├── specs.md                # Technical implementation documentation
-        ├── components/             # Generated .tsx components (local to section)
-        └── images/                 # Downloaded SVG/PNG assets
+        ├── data.json               # Exhaustive layout, frame & children metadata
+        ├── specs.md                # Technical implementation documentation (includes asset manifest)
+        └── components/             # Generated .tsx components (local to section)
 ```
 
 ## Tips

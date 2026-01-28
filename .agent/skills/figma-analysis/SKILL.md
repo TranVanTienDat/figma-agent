@@ -154,10 +154,9 @@ figma-agent/
 │
 └── [page-name]/                    # Page-specific assets (e.g., landing-page)
     └── [section-name]/             # Examples: header-nav, hero-section, features-grid, footer
-        ├── data.json               # Exhaustive layout & children metadata
-        ├── specs.md                # Technical implementation documentation
-        ├── components/             # Generated .tsx components (local to section)
-        └── images/                 # Downloaded SVG/PNG assets
+        ├── data.json               # Exhaustive layout, frame & recursive children metadata
+        ├── specs.md                # Technical implementation documentation (includes asset manifest)
+        └── components/             # Generated .tsx components (local to section)
 ```
 
 ## 📝 data.json Schema
@@ -169,13 +168,18 @@ figma-agent/
   "figmaUrl": "https://figma.com/file/...",
   "selection_link": "https://www.figma.com/design/XXXX/XXXX?node-id=123:456",
   "layout": {
-    "width": 1440,
-    "height": 80,
+    "grid": "...",
+    "gap": 32,
     "padding": { "top": 20, "right": 40, "bottom": 20, "left": 40 },
-    "gap": 24,
     "direction": "horizontal",
     "alignment": "center",
     "justifyContent": "space-between"
+  },
+  "frame": {
+    "width": 1440,
+    "height": 80,
+    "x": 0,
+    "y": 0
   },
   "children": [
     {
@@ -257,9 +261,9 @@ figma-agent/
 3. **Extract Tokens**: Parse colors, typography, effects from JSON
 4. **Map Components**: Identify reusable components and variants
 5. **Generate Structure**: Create `figma-agent/` folders and files
-6. **Download Assets**: Use `mcp_FigmaAIBridge_download_figma_images` for vectors/images
-7. **Create Specs**: Write comprehensive `specs.md` for each section
-8. **Verify Accuracy**: Cross-check extracted data with visual design
+6. **Identify Visual Assets**: Map vectors/images and document them in `specs.md` (Asset Manifest). **DO NOT** download during review.
+7. **Create Specs**: Write comprehensive `specs.md` for each section, including layout, components, and assets.
+8. **Verify Accuracy**: Cross-check extracted metadata (frame, children) with visual design.
 
 ## 🎨 Special Considerations
 

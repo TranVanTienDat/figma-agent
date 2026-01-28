@@ -22,7 +22,7 @@
 Run this command once to install the tool on your machine:
 
 ```bash
-npm install -g @tranvantiendat/figma-agent
+npm install -g @ckim03/figma-agent
 ```
 
 **Alternative:** Install from GitHub or clone locally:

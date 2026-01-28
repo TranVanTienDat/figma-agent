@@ -29,7 +29,7 @@ All notable changes to this project will be documented in this file.
 Install globally from npm:
 
 ```bash
-npm install -g @tranvantiendat/figma-agent
+npm install -g @ckim03/figma-agent
 ```
 
 Or from GitHub:

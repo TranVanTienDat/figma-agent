@@ -1,5 +1,5 @@
 {
-  "name": "@tranvantiendat/figma-agent",
+  "name": "@ckim03/figma-agent",
   "version": "1.0.0",
   "description": "Figma analysis tool for Antigravity - Extract design specifications and convert to code-ready format",
   "main": "index.js",
@@ -21,7 +21,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TranVanTienDat/figma-agent.git"
+    "url": "git+https://github.com/TranVanTienDat/figma-agent.git"
   },
   "dependencies": {},
   "devDependencies": {},

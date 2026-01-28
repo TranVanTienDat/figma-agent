@@ -35,7 +35,7 @@ Ensure your `FigmaAIBridge` is linked to a valid Figma Personal Access Token.
 Run the following command to make the tool available everywhere:
 
 ```bash
-npm install -g @tranvantiendat/figma-agent
+npm install -g @ckim03/figma-agent
 ```
 
 **Alternative Method** - Install from GitHub or clone locally:

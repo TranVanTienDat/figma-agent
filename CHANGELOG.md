@@ -26,7 +26,13 @@ All notable changes to this project will be documented in this file.
 
 ## Installation
 
-Install globally from GitHub:
+Install globally from npm:
+
+```bash
+npm install -g @tranvantiendat/figma-agent
+```
+
+Or from GitHub:
 
 ```bash
 npm install -g git+https://github.com/TranVanTienDat/figma-agent.git

@@ -17,7 +17,7 @@ This workflow operates under strict security and accuracy protocols defined in `
 
 ### 1. Identify Target
 
-- If a **section-name** and **link selection** (URL with `node-id`) are provided:
+- If a **section-page** and **link selection** (URL with `node-id`) are provided:
   - Proceed to **Targeted Extraction (Exhaustive Deep Dive)**.
 - Otherwise, proceed to **General Preview**.
 
@@ -26,7 +26,7 @@ This workflow operates under strict security and accuracy protocols defined in `
 If targeted, perform the following strict protocol:
 
 1.  **Phase 1: Recursive X-Ray Scan**:
-    - Use `mcp_FigmaAIBridge_get_figma_data` with `nodeId` and **Full Depth** traversal.
+    - Use `mcp_figma_desktop_get_metadata` (or equivalent) with `nodeId` and **Full Depth** traversal.
     - Reach all "leaves" (Text, Vector, Boolean).
     - Discard all `hidden == true` nodes.
 
@@ -39,7 +39,7 @@ If targeted, perform the following strict protocol:
     - If mismatch found, re-scan subtree immediately.
 
 4.  **Save to File Structure**:
-    - Directory: `figma-agent/[page-name]/section-[section-name]/`
+    - Directory: `figma-agent/pages/[page-name]/[section-page]/`
     - File: `data.json`
     - Metadata: Set `audit_status: "Verified"` after successful comparison.
 
@@ -48,7 +48,7 @@ If targeted, perform the following strict protocol:
 If no section is specified:
 
 1. **Fetch Basic File Data**:
-   - Use `mcp_FigmaAIBridge_get_figma_data` (fileKey only).
+   - Use `mcp_figma_desktop_get_metadata` (fileKey only).
 
 2. **Display Structure**:
    - List Pages, Top-Level Frames, and Node IDs.
@@ -60,10 +60,11 @@ When Targeted Extraction is used, it creates/updates:
 
 ```
 figma-agent/
-└── [page-name]/
-    └── section-[section-name]/
-        ├── data.json               # Populated with deep-dive data
-        └── ...                     # Other section assets
+└── pages/
+    └── [page-name]/
+        └── [section-page]/
+            ├── data.json               # Populated with deep-dive data
+            └── ...                     # Other section assets
 ```
 
 ## Output

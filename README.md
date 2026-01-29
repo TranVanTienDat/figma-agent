@@ -14,6 +14,7 @@
 - ✅ **Code Generation** - Automated React/Next.js component building.
 - ✅ **Metadata Tracking** - Selection links saved directly into your project for traceability.
 - ✅ **Design-to-Code Audit** - Comparing code with Figma to reach pixel-perfection.
+- ✅ **AgentSkills Specification** - Fully compliant with the [AgentSkills.io](https://agentskills.io) format.
 
 ## ⚙️ Quick Start & Installation
 
@@ -79,10 +80,10 @@ This tool is optimized for **Antigravity**. Use these slash commands in your cha
 
 ### Step 3: Exhaustive Deep Dive
 
-**Command:** `/get-figma-info [section_name] [selection_link]`
+**Command:** `/get-figma-info [section_page] [selection_link]`
 
-- **Action**: Captures actual overrides and pixel-precise layout for a specific section.
-- **Result**: Populates `figma-agent/[page]/section-[name]/data.json`.
+- **Action**: Captures actual overrides and pixel-precise layout for a specific UI zone.
+- **Result**: Populates `figma-agent/pages/[page-name]/[section-page]/data.json`.
 
 ### Step 4: Architect the Code
 
@@ -123,7 +124,7 @@ module.exports = {
 The `data.json` provides everything you need to build custom components:
 
 ```tsx
-import headerData from "./figma-agent/landing-page/section-header/data.json";
+import headerData from "./figma-agent/pages/landing-page/header-nav/data.json";
 
 const Header = () => {
   const { padding, gap } = headerData.layout;
@@ -143,19 +144,20 @@ The tool organizes data following a clean, scalable architecture:
 
 ```
 figma-agent/
-├── common/                         # Shared Design System
+├── common/                         # Shared Design System (General project info)
 │   ├── colors/
 │   │   └── system-colors.json      # Global color tokens
 │   ├── typography/
 │   │   └── text-presets.json      # Global font presets
 │   └── variants/                   # Global component variants
 │
-└── [page-name]/                    # Page-specific assets (e.g., landingpage)
-    └── section-[name]/             # Examples: header-hero, stats-features
-        ├── data.json               # Exhaustive layout & children metadata
-        ├── specs.md                # Technical implementation documentation
-        ├── components/             # Generated .tsx components (local to section)
-        └── images/                 # Downloaded SVG/PNG assets
+└── pages/                          # All project pages
+    └── [page-name]/                # Data for a specific page (e.g., landing-page)
+        └── [section-page]/         # Examples: header-nav, sidebar, chat-list
+            ├── data.json           # Exhaustive layout & children metadata
+            ├── specs.md            # Technical documentation & display logic
+            ├── components/         # Generated .tsx components (local to section)
+            └── images/                 # Downloaded SVG/PNG assets
 ```
 
 ## 📚 Documentation & Reference

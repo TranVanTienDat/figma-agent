@@ -29,15 +29,21 @@ Read the figma-analysis skill to understand the extraction requirements:
 View file: .agent/skills/figma-analysis/SKILL.md
 ```
 
-### 2. Get Figma File Information
+### 3. File Discovery & Metadata (Initial Phase)
 
-Ask the user for:
+Before deep-diving into nodes, extract the file-level context to understand the project's scale and ownership.
 
-- Figma file URL or file key
-- Specific node ID (if analyzing a specific frame/section)
-- Page name for organizing extracted data
+// turbo
 
-### 3. Fetch Figma Data (Exhaustive Mode)
+```bash
+# Get file key from URL and fetch metadata
+python3 .agent/skills/figma-analysis/scripts/fetch_figma_metadata.py "[figma_url]"
+```
+
+- **Action**: Read the generated `figma_metadata.json` to identify the file name, creator, and total components/styles.
+- **Goal**: Provide a summary of the project to the user before proceeding.
+
+### 4. Fetch Figma Data (Exhaustive Mode)
 
 **Security Reminder**: You are strictly prohibited from accessing any non-Figma URLs during this process.
 
@@ -57,14 +63,6 @@ Follow the **Phase 1 & 2** of the Exhaustive Deep Dive protocol:
 
 - Discard hidden nodes.
 - Extract Text Overrides, Font Styles, Component Properties, and Auto-Layout specs.
-
-### 5. Visual Verification (Phase 3)
-
-**MANDATORY**: Cross-check data against visual reality.
-
-1.  **Get Screenshot**: Use `get_screenshot` for the target node.
-2.  **Compare**: Ensure text content and icons match your JSON data.
-3.  **Resolve**: If data shows `Button` but screenshot shows `Submit`, re-scan the subtree.
 
 ### 6. Analyze and Save Design Tokens (MANDATORY EXECUTION)
 
@@ -108,20 +106,23 @@ You **MUST** extract the following design tokens and physically save them as JSO
 - Identify section-specific components
 - Generate boilerplate code in `figma-agent/[page-name]/section-[name]/components/local-component.tsx`
 
-### 8. Identify and Create Section Folders (MANDATORY)
+### 8. Identify and Create Section Folders (MANDATORY Architecture)
 
-You **MUST** physically create the directory structure on the disk. Do not just describe it.
+You **MUST** physically create the directory structure on the disk following the hierarchical rule:
+`figma-agent/pages/[page-name]/[section-page]`.
 
-1. **Identify Sections**: Look for top-level frames (e.g., `header-nav`, `hero-section`, `features-grid`).
+1. **Identify Sections**: Look for top-level frames (e.g., `sidebar-nav`, `project-list`, `chat-content`).
 2. **Execute Initialization**: For each identified section, run the initialization script via the `run_command` tool.
 
    // turbo
 
    ```bash
-   # Syntax: node .agent/skills/figma-analysis/scripts/init-figma-agents.js [page-name] [section-name]
-   # Example:
-   node .agent/skills/figma-analysis/scripts/init-figma-agents.js landing-page header-nav
-   node .agent/skills/figma-analysis/scripts/init-figma-agents.js landing-page hero-section
+   # Syntax: node .agent/skills/figma-analysis/scripts/init-figma-agents.js [page-name] [section-page]
+   # Example for Information Page:
+   node .agent/skills/figma-analysis/scripts/init-figma-agents.js information-page sidebar-nav
+
+   # Example for User Detail Page:
+   node .agent/skills/figma-analysis/scripts/init-figma-agents.js user-detail-page header-profile
    ```
 
 3. **Verify Creation**: Using `list_dir`, verify that `figma-agent/[page-name]/[section-name]` exists.
@@ -148,39 +149,46 @@ Create `specs.md` for each section with:
 
 Generate a comprehensive report and **Verify** that all folders were created on the filesystem.
 
-### 12. Verify Extraction (Audit)
+### 10. Finalize Review
 
-Cross-check:
+Set `audit_status: "Review-Complete"` in data.json files (Visual Verification deferred to Build phase).
 
-- All text content is actual displayed text (not defaults)
-- Component overrides are captured
-- Colors match visual design
-- Measurements are accurate
-- Metadata includes complete `frame` (dimensions/position) and `children` tree.
+## 📂 Output Structure
 
-Set `audit_status: "Verified"` in data.json files
-
-## Output Structure
-
-After completion, you should have:
+After completion, the `figma-agent/` directory must follow this organization:
 
 ```
 figma-agent/
-├── common/                         # Shared Design System
+├── common/                         # General project information (Design System)
 │   ├── colors/
 │   │   └── system-colors.json      # Global color tokens
 │   ├── typography/
 │   │   └── text-presets.json      # Global font presets
 │   ├── styles/
-│   │   └── effects.json           # Glassmorphism, Glows, Radiad Gradients
+│   │   └── effects.json           # Glassmorphism, Glows, Radial Gradients
 │   └── variants/                   # Global component variants
 │
-└── [page-name]/                    # Page-specific assets (e.g., landing-page)
-    └── [section-name]/             # Examples: header-nav, hero-section, features-grid, footer
-        ├── data.json               # Exhaustive layout, frame & children metadata
-        ├── specs.md                # Technical implementation documentation (includes asset manifest)
-        └── components/             # Generated .tsx components (local to section)
+└── pages/                          # All project pages
+    └── [page-name]/                # Data for a specific page (e.g., information-page)
+        └── [section-page]/         # UI Section information within that page
+            ├── data.json           # Metadata layout & node tree structure
+            ├── specs.md            # Technical documentation & display logic
+            └── components/         # Child components for this section
 ```
+
+## 📖 Usage Examples
+
+When a user requests to review a specific page, follow the `[name]-page` naming convention.
+
+**Example 1: Reviewing the Information Page**
+
+- **Prompt**: `/figma-review [link]. review the information page`
+- **Action**: Create the directory `figma-agent/pages/information-page/`. If `landing-page` was previously used, replace it with this new name.
+
+**Example 2: Reviewing an additional User Detail Page**
+
+- **Prompt**: `/figma-review [link]. review the user-detail page`
+- **Action**: Create the directory `figma-agent/pages/user-detail-page/` alongside `information-page`. Do not delete existing pages.
 
 ## Tips
 

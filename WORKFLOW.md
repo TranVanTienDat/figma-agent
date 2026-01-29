@@ -38,17 +38,18 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │              STEP 3: Data Organization                          │
 │                                                                 │
-│  .figma-agents/                                                 │
-│  ├── common/                  ← Shared design system            │
+│  figma-agent/                                                   │
+│  ├── common/                  ← Shared design system (General)  │
 │  │   ├── colors/                                                │
 │  │   ├── typography/                                            │
 │  │   └── components/                                            │
-│  └── [page-name]/             ← Page-specific data              │
-│      └── section-[name]/                                        │
-│          ├── data.json        ← Complete section data           │
-│          ├── specs.md         ← Implementation guide            │
-│          ├── images/          ← Downloaded assets               │
-│          └── components/      ← Local components                │
+│  └── pages/                   ← All project pages               │
+│      └── [page-name]/         ← Specific page info              │
+│          └── [section-page]/  ← UI section data                 │
+│              ├── data.json    ← Complete section metadata       │
+│              ├── specs.md     ← Implementation guide            │
+│              ├── images/      ← Downloaded assets               │
+│              └── components/  ← Local components                │
 └────────────────────────┬────────────────────────────────────────┘
                          │
                          ▼
@@ -71,13 +72,13 @@
 Figma File
     │
     ├─► Design Tokens
-    │   ├─► Colors         → .figma-agents/common/colors/
-    │   ├─► Typography     → .figma-agents/common/typography/
-    │   └─► Effects        → .figma-agents/common/effects/
+    │   ├─► Colors         → figma-agent/common/colors/
+    │   ├─► Typography     → figma-agent/common/typography/
+    │   └─► Effects        → figma-agent/common/styles/
     │
     ├─► Components
-    │   ├─► Global         → .figma-agents/common/components/
-    │   └─► Local          → .figma-agents/[page]/section-[name]/components/
+    │   ├─► Global         → figma-agent/common/components/
+    │   └─► Local          → figma-agent/pages/[page]/[section]/components/
     │
     ├─► Layout
     │   ├─► Structure      → data.json (layout property)
@@ -85,11 +86,11 @@ Figma File
     │   └─► Constraints    → data.json (constraints)
     │
     ├─► Assets
-    │   ├─► Vectors (SVG)  → .figma-agents/[page]/section-[name]/images/
-    │   └─► Images (PNG)   → .figma-agents/[page]/section-[name]/images/
+    │   ├─► Vectors (SVG)  → figma-agent/pages/[page]/[section]/images/
+    │   └─► Images (PNG)   → figma-agent/pages/[page]/[section]/images/
     │
     └─► Specifications
-        ├─► data.json      → Complete section data
+        ├─► data.json      → Complete section metadata
         └─► specs.md       → Implementation guide
 ```
 

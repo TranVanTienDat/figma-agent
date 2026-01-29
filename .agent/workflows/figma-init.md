@@ -23,7 +23,7 @@ If `AGENTS.md` is missing, ask the user for the following details:
 - **Tech Stack**:
   - Framework (e.g., Next.js, Vite, React)
   - Language (TypeScript/JavaScript)
-  - UI framwork (antd, Mui/joy,...)
+  - UI framework (antd, Mui/joy, etc.)
   - Styling (Vanilla CSS, Tailwind, SCSS, etc.)
   - Component Library (Radix UI, Shadcn, etc.)
   - Icons (Lucide, Phosphor, etc.)
@@ -49,11 +49,11 @@ If `AGENTS.md` is missing, ask the user for the following details:
 
 ## 📁 Repository Structure
 
-- `src/components/`: Reusable UI components
+- `src/components/common/`: Shared reusable components
+- `src/components/pages/`: Page-specific components organized by [page-name]/[section-page]
 - `src/hooks/`: Custom React hooks
 - `src/styles/`: Global styles and tokens
-- `figma-agent/`: Extracted design data and section specs
-- ...
+- `figma-agent/`: Extracted design data (common/ and pages/)
 
 ## 🎨 Coding Standards
 

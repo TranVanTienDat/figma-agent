@@ -16,8 +16,8 @@ A comprehensive Figma-to-code extraction system inspired by [OpenSpec](https://g
 
 #### 1. **Skills** (`.agent/skills/`)
 
-- ✅ **figma-analysis** - Design translation and extraction logic
-- ✅ **figma-to-code** - Professional code generation architect
+- ✅ **figma-analysis** - Advanced design translation (v1.1.0, AgentSkills spec)
+- ✅ **figma-to-code** - Professional code generation architect (v1.1.0, AgentSkills spec)
 
 #### 2. **Workflows** (`.agent/workflows/`)
 
@@ -28,12 +28,12 @@ A comprehensive Figma-to-code extraction system inspired by [OpenSpec](https://g
 
 #### 3. **Data Storage** (`figma-agent/`)
 
-- ✅ **common/** - Shared design tokens
+- ✅ **common/** - Shared design tokens (General project info)
   - colors/
   - typography/
   - components/
   - variants/
-- ✅ **[page-name]/section-[name]/** - Targeted section data
+- ✅ **pages/[page-name]/[section-page]/** - Granular UI data organized by page
   - `data.json` - Comprehensive layout/DOM structure
   - `specs.md` - Technical implementation details
   - `images/` - Downloaded SVG/PNG assets
@@ -55,10 +55,14 @@ build-tool/
 │   ├── skills/
 │   │   ├── figma-analysis/
 │   │   │   ├── SKILL.md
-│   │   │   ├── README.md
-│   │   │   └── templates/
+│   │   │   ├── references/
+│   │   │   │   └── REFERENCE.md           # Progressive disclosure guides
+│   │   │   ├── scripts/
+│   │   │   └── assets/
 │   │   └── figma-to-code/
-│   │       └── SKILL.md
+│   │       ├── SKILL.md
+│   │       └── references/
+│   │           └── REFERENCE.md
 │   └── workflows/
 │       ├── figma-review.md
 │       ├── get-figma-info.md
@@ -66,18 +70,19 @@ build-tool/
 │       └── figma-audit.md
 │
 ├── figma-agent/                                   # Extracted data hub
-│   ├── common/                                    # Shared design system
+│   ├── common/                                    # Shared design system (General info)
 │   │   ├── colors/
 │   │   ├── typography/
 │   │   ├── components/
 │   │   └── variants/
-│   └── [page-name]/                               # Page-specific assets
-│       └── section-[name]/
-│           ├── data.json                          # Exhaustive deep dive data
-│           ├── specs.md                           # Implementation specs
-│           ├── colors/                            # Section-local tokens
-│           ├── components/                        # Local .tsx components
-│           └── images/                            # Extracted icons/vectors
+│   └── pages/                                     # All project pages
+│       └── [page-name]/                           # Specific page data
+│           └── [section-page]/                    # UI Section analysis
+│               ├── data.json                      # Exhaustive deep dive data
+│               ├── specs.md                       # Implementation specs
+│               ├── colors/                        # Section-local tokens
+│               ├── components/                    # Local .tsx components
+│               └── images/                        # Extracted icons/vectors
 │
 ├── README.md
 ├── INSTALL.md

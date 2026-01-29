@@ -56,6 +56,9 @@ function initCommonStructure() {
   ensureDir(path.join(baseDir, "common", "components"));
   ensureDir(path.join(baseDir, "common", "variants"));
 
+  // Default page directories
+  ensureDir(path.join(baseDir, "pages"));
+
   // Create template files
   const colorsTemplate = {
     colors: {
@@ -123,6 +126,7 @@ function initSectionStructure(page, section) {
   ensureDir(sectionDir);
   ensureDir(path.join(sectionDir, "components"));
   ensureDir(path.join(sectionDir, "images"));
+  ensureDir(path.join(sectionDir, "colors"));
 
   // Create data.json template
   const dataTemplate = {

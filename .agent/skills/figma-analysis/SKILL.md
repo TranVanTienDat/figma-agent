@@ -1,11 +1,17 @@
 ---
 name: figma-analysis
-description: Analyze Figma designs and extract technical requirements, UI logic, component structures, and implementation blueprints for developers. Upgraded with advanced token mapping and architect-level layout detection.
+description: Analyze Figma designs and extract technical requirements, UI logic, component structures, and implementation blueprints for developers. Use when you need to translate Figma visuals into data.
+version: "1.1.0"
+license: MIT
+compatibility: Requires FigmaAIBridge MCP or browser-based visual analysis capabilities.
+metadata:
+  author: "Antigravity Team"
+  category: "Design-to-Code"
 ---
 
 # Figma Analysis - Design to Development Translator
 
-> Transforms Figma design data (JSON metadata or visual analysis) into actionable technical requirements and code-ready specifications.
+> Transforms Figma design data into actionable technical requirements. For deep technical rules, see [Technical Reference](references/REFERENCE.md).
 
 ## 🎯 What This Skill Does
 
@@ -19,14 +25,71 @@ You are a Senior UI Engineer and System Analyst. When a user provides Figma data
     - Zero guessing is tolerated. If data is missing (e.g., fontSize), stop and report.
     - Mismatch between data and screenshot requires a subtree re-scan.
 
+## 🔍 Metadata Query Utilities (Efficient Data Access)
+
+When working with large Figma files, avoid loading the entire `file-metadata.json` (which can be thousands of lines). Instead, use the query tool:
+
+**Available Query Commands:**
+
+1. **Get Summary** (High-level overview):
+
+   ```bash
+   python3 .agent/skills/figma-analysis/scripts/query_metadata.py summary
+   ```
+
+   Returns: File name, folder, version, component/style counts (~10 lines).
+
+2. **Search Components**:
+
+   ```bash
+   python3 .agent/skills/figma-analysis/scripts/query_metadata.py components --search "button"
+   ```
+
+   Returns: Only components matching the search term.
+
+3. **Filter Styles by Type**:
+
+   ```bash
+   python3 .agent/skills/figma-analysis/scripts/query_metadata.py styles --type TEXT
+   ```
+
+   Returns: Only TEXT styles (or FILL, EFFECT, GRID).
+
+4. **Get Component Details**:
+
+   ```bash
+   python3 .agent/skills/figma-analysis/scripts/query_metadata.py component "Primary Button"
+   ```
+
+   Returns: Full details for a specific component.
+
+5. **Get Style Details** (with optional API fetch):
+
+   ```bash
+   # Basic info from metadata
+   python3 .agent/skills/figma-analysis/scripts/query_metadata.py style "Heading 1"
+
+   # Full details from Figma API (includes actual CSS properties)
+   python3 .agent/skills/figma-analysis/scripts/query_metadata.py style "Heading 1" --fetch-api
+   ```
+
+   Returns: Style metadata, optionally with full CSS properties from API.
+
+**When to Use:**
+
+- Use `summary` at the start of analysis to understand project scale.
+- Use `components --search` when user asks about specific UI elements.
+- Use `styles --type TEXT` when extracting typography information.
+- **Never** read the full `file-metadata.json` directly unless absolutely necessary.
+
 ## 📋 Analysis Process (Senior Architect Level)
 
 ### Step 0: Project Context Auto-Detection
 
 Before starting ANY analysis, you must synchronize with the project's technical context:
 
-1.  **Auto-Detect Tech Stack**: Read `package.json`, `tailwind.config.js`, or `tsconfig.json` to identify the Framework, Language, and Styling system.
-2.  **No Assumptions**: If markers are missing, ask the user for clarification.
+1.  **Read AGENTS.md First**: Always read `AGENTS.md` at the project root as the primary source of truth for the Framework, Language, Styling system, and coding standards.
+2.  **Verify via Markers**: Reference `package.json`, `tailwind.config.js`, or `tsconfig.json` to confirm detected markers.
 3.  **Context Overrides**: If an `.agent/context.json` or similar config exists within the `.agent` folder, use it as the source of truth for custom standards.
 
 ### Step 1: Design Token & "Magic Number" Extraction
@@ -50,24 +113,33 @@ Before starting ANY analysis, you must synchronize with the project's technical 
 
 ### Step 2: Auto-Layout to CSS Mapping
 
-- **Flexbox/Grid Logic**: Map Figma "Auto Layout" (Gap, Padding, Direction) directly to the layout system defined in `AGENTS.md` (e.g., Tailwind classes, CSS Modules, or Vanilla CSS).
-- **Responsive Sizing**:
-  - Identify "Fill Container" vs "Hug Contents".
-  - Detect **Max-Widths** for content containers (e.g., 1140px, 1240px).
-- **Overlap Logic**: Identify negative margins or absolute positioning needed for section transitions (e.g., Stats card overlapping Hero).
-- **Glassmorphism Mapping**: Map semi-transparent fills + backdrop blur to `bg-white/10 backdrop-blur-md` (or equivalent HSL variables).
+- **Flexbox/Grid Logic**: Map Figma "Auto Layout" (Gap, Padding, Direction) directly to the layout system defined in `AGENTS.md`.
+- **Architecture & UI Zone Detection**:
+  - Identify **Page Content Zoninng**: Mapping layers to the `figma-agent/pages/[page-name]/[section-page]` structure.
+  - Identify **App Shell** components: Fixed/Flex Sidebar, Topbar, and Main Content zones.
+  - Detect **Scroll Containers**: Distinguish between page-level scroll and internal component scroll.
+- **Responsive Sizing**: Identify "Fill Container" vs "Hug Contents".
+- **Glassmorphism Mapping**: Map semi-transparent fills + backdrop blur to appropriate tokens.
 
-### Step 3: Atomic & Component Strategy
+### Step 3: Atomic & Component Strategy (Dashboard Focus)
 
-- **Shared Components**: Proactively identify components for the component directory specified in `AGENTS.md` (e.g., `/src/components/common`).
-- **Component Variants**: List all states (Default, Hover, Active, Disabled).
-- **Navigation Layouts**: Detect complex patterns (e.g., dots on the left, arrows on the right for carousels).
+- **Atomic Breakdown**: Proactively identify Atoms (Buttons, Badges) and Molecules (Chat bubbles, Table rows, Search bars).
+- **State Analysis**: Detect and document variants for Hover, Active, and Selected states (crucial for sidebars).
 
 ### Step 4: Logic & State Blueprint
 
-- **Form Patterns**: Extract validation rules, placeholder text, and error states.
-- **Carousel/Slider Logic**: Detect item widths, gaps, and navigation behavior.
-- **Data Model**: Define TypeScript interfaces for the content.
+- **Data Models**: Define TypeScript interfaces for complex data structures like Users, Messages, or Project Tasks.
+- **Navigation Hierarchy**: Map the relationship between Sidebar links and Page content.
+
+## 📝 Planning Protocol (Sync with Development)
+
+When analyzing, provide a structured plan following these phases:
+
+1. **Phase 1: Deep Analysis**: Extraction of Tokens and Layout Mapping.
+2. **Phase 2: Shell Architecture**: Defining the App Shell and global components.
+3. **Phase 3: Atomic Build**: Building reusable components based on detected Atoms/Molecules.
+4. **Phase 4: Composition**: Assembling full Dashboard views with Semantic HTML & H1-H4 hierarchy.
+5. **Phase 5: Refinement**: Visual Audit and Micro-interaction validation.
 
 ## 📤 Deliverables Format
 
@@ -80,19 +152,19 @@ Provide a visual overview of the design with key metrics:
 - Component complexity score
 - Estimated implementation time
 
-### 2. Architecture Tree
+### 2. Architecture Tree (Code Structure)
 
 ```
 src/
 ├── components/
-│   ├── common/
+│   ├── common/             # Global reusable components (from figma-agent/common/components)
 │   │   ├── Button/
-│   │   ├── Card/
 │   │   └── Input/
-│   └── [page-name]/
-│       └── [SectionName]/
+│   └── pages/              # Page-specific component components
+│       └── [page-name]/    # Mapping to figma-agent/pages/[page-name]
+│           └── [SectionPage]/
 ├── styles/
-│   ├── tokens.css
+│   ├── tokens.css          # Mapped from figma-agent/common/
 │   └── components.css
 └── types/
     └── [page-name].types.ts
@@ -145,13 +217,22 @@ Provide a code skeleton based on the tech stack in `AGENTS.md` (e.g., TSX, JSX, 
   - Prefer **HSL** for colors if the project supports it to handle transparency easily.
   - Implement borders and glassmorphism according to detected design style.
 
+## 🏗️ Core Architecture (Core Standards)
+
+To ensure the project is organized scientifically, all analysis data must comply with the following structure:
+
+1.  **figma-agent/common/**: Stores general project-wide information (Colors, Typography, Effects, Shared Variants). This is the single "source of truth" for the Design System.
+2.  **figma-agent/pages/**: The root directory containing information for all pages in the project.
+3.  **figma-agent/pages/[page-name]/**: Directory containing specific data for a single page (e.g., `landing-page`, `dashboard`).
+4.  **figma-agent/pages/[page-name]/[section-page]/**: Directory containing detailed information about each Section (UI design zone) within that page. Each section will have `data.json`, `specs.md`, and child components.
+
 ## 💾 Data Storage Structure
 
-All extracted data will be saved to `figma-agent/` following this structure:
+Extracted data will be saved to `figma-agent/` according to the following diagram:
 
 ```
 figma-agent/
-├── common/                         # Shared Design System
+├── common/                         # Shared Design System (General project info)
 │   ├── colors/
 │   │   └── system-colors.json      # Global color tokens
 │   ├── typography/
@@ -160,11 +241,12 @@ figma-agent/
 │   │   └── effects.json           # Glassmorphism, Glows, Radial Gradients
 │   └── variants/                   # Global component variants
 │
-└── [page-name]/                    # Page-specific assets (e.g., landing-page)
-    └── [section-name]/             # Examples: header-nav, hero-section, features-grid, footer
-        ├── data.json               # Exhaustive layout, frame & recursive children metadata
-        ├── specs.md                # Technical implementation documentation (includes asset manifest)
-        └── components/             # Generated .tsx components (local to section)
+└── pages/                          # All project pages
+    └── [page-name]/                # Data for a specific page
+        └── [section-page]/         # UI Section information within that page
+            ├── data.json           # Layout metadata & node tree structure
+            ├── specs.md            # Technical documentation & display logic
+            └── components/         # Child components generated for this section
 ```
 
 ## 📝 data.json Schema
@@ -276,6 +358,7 @@ figma-agent/
 3.  **Phase 3: Visual Verification & Override Resolution**
     - **Override Priority**: Retrieve the actual text displayed on the screen. If an Instance has a text override, ignore the default component value.
     - **Screenshot Cross-Check**: Invoke `get_screenshot`. Compare the text/icons in the image against extracted JSON.
+    - **Deferral Policy**: During `/figma-review`, this step may be deferred to the `/figma-build` phase to keep the bulk extraction process lean. However, if extraction accuracy is in doubt, it must be performed immediately.
     - **Mismatch Resolution**: If the screenshot differs from data, re-scan the subtree. Do not proceed until they match.
 
 4.  **Phase 4: Output Structure (JSON)**
@@ -336,26 +419,41 @@ Detect and document:
 }
 ```
 
-### Typography Preset Example
+### Directory Mapping Example (Dashboard Project)
+
+```
+figma-agent/
+├── common/
+│   ├── colors/system-colors.json     # { "primary": "#FF0000" }
+│   └── components/Button.json       # Master Button definition
+└── pages/
+    └── dashboard/                   # [page-name]
+        └── sidebar-nav/             # [section-page]
+            ├── data.json            # Layout & Layer metadata for Sidebar
+            ├── specs.md             # Interaction logic & variants
+            └── components/
+                └── NavItem.tsx      # Generated specific child component
+```
+
+### data.json (Section UI) Example
 
 ```json
 {
-  "typography": {
-    "h1": {
-      "fontFamily": "Inter",
-      "fontSize": "48px",
-      "lineHeight": "56px",
-      "fontWeight": 700,
-      "letterSpacing": "-0.02em"
-    },
-    "body": {
-      "fontFamily": "Inter",
-      "fontSize": "16px",
-      "lineHeight": "24px",
-      "fontWeight": 400,
-      "letterSpacing": "0"
+  "sectionName": "sidebar-nav",
+  "pageContext": "dashboard",
+  "nodeId": "123:456",
+  "layout": {
+    "direction": "vertical",
+    "gap": 12,
+    "padding": { "left": 16, "right": 16 }
+  },
+  "children": [
+    {
+      "type": "INSTANCE",
+      "name": "Home-Link",
+      "overrides": { "text": "Dashboard", "active": true }
     }
-  }
+  ]
 }
 ```
 

@@ -8,7 +8,7 @@ Automated workflow to verify the alignment between your existing code and the so
 
 ## Usage
 
-Command: `/figma-audit [section-name] [link selection]`
+Command: `/figma-audit [section-page] [link selection]`
 
 ## Step-by-Step Instructions
 
@@ -19,7 +19,7 @@ Command: `/figma-audit [section-name] [link selection]`
 
 ### 2. Code Inspection
 
-- **Locate Component**: Find the corresponding component file (e.g., `src/components/[SectionName].tsx`).
+- **Locate Component**: Find the corresponding component file (e.g., `src/components/pages/[PageName]/[SectionPage].tsx`).
 - **Analyze Code Structure**: Read the component implementation to understand its current layout logic (Flexbox, Grid, CSS variables).
 
 ### 3. Comparison Logic (The Audit)

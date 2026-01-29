@@ -43,74 +43,16 @@ function createTemplateFile(filePath, content) {
 }
 
 /**
- * Initialize common directory structure
+ * Initialize data directory structure
  */
-function initCommonStructure() {
-  console.log("\n📁 Initializing common structure...\n");
+function initDataStructure() {
+  console.log("\n📁 Initializing data structure...\n");
 
-  // Common directories
-  ensureDir(path.join(baseDir, "common"));
-  ensureDir(path.join(baseDir, "common", "colors"));
-  ensureDir(path.join(baseDir, "common", "typography"));
-  ensureDir(path.join(baseDir, "common", "styles")); // Updated: unified styles folder
-  ensureDir(path.join(baseDir, "common", "components"));
-  ensureDir(path.join(baseDir, "common", "variants"));
+  // Data directory
+  ensureDir(path.join(baseDir, "data"));
 
   // Default page directories
   ensureDir(path.join(baseDir, "pages"));
-
-  // Create template files
-  const colorsTemplate = {
-    colors: {
-      brand: {},
-      neutral: {},
-      semantic: {},
-    },
-    usage: {},
-    extracted_from: "Figma file",
-    last_updated: new Date().toISOString(),
-  };
-
-  const typographyTemplate = {
-    typography: {},
-    fontFamilies: {},
-    extracted_from: "Figma file",
-    last_updated: new Date().toISOString(),
-  };
-
-  const effectsTemplate = {
-    effects: {
-      glassmorphism: {},
-      glows: {},
-      gradients: {},
-    },
-    last_updated: new Date().toISOString(),
-  };
-
-  const variantsTemplate = {
-    variants: {},
-    last_updated: new Date().toISOString(),
-  };
-
-  createTemplateFile(
-    path.join(baseDir, "common", "colors", "system-colors.json"),
-    colorsTemplate,
-  );
-
-  createTemplateFile(
-    path.join(baseDir, "common", "typography", "text-presets.json"),
-    typographyTemplate,
-  );
-
-  createTemplateFile(
-    path.join(baseDir, "common", "styles", "effects.json"),
-    effectsTemplate,
-  );
-
-  createTemplateFile(
-    path.join(baseDir, "common", "variants", "global-variants.json"),
-    variantsTemplate,
-  );
 }
 
 /**
@@ -230,8 +172,8 @@ function initSectionStructure(page, section) {
 function main() {
   console.log("🚀 Figma Agents Directory Initializer\n");
 
-  // Always initialize common structure
-  initCommonStructure();
+  // Always initialize data structure
+  initDataStructure();
 
   // Initialize section structure if provided
   if (pageName && sectionName) {

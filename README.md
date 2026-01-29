@@ -2,43 +2,24 @@
 
 > 🎨 A comprehensive Figma-to-code extraction system for Antigravity, specifically designed for professional developer workflows.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Node Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org)
-
 ## 🌟 Overview
 
 **@cam/figma-agent** automatically transforms Figma designs into structured data and production-ready code. It covers the entire lifecycle of UI implementation:
 
-- ✅ **Design Tokens** - Global colors, typography, and effects extraction.
-- ✅ **Deep Data Extraction** - Exhaustive analysis of UI sections (Auto-layout, DOM, Overrides).
-- ✅ **Code Generation** - Automated React/Next.js component building.
-- ✅ **Metadata Tracking** - Selection links saved directly into your project for traceability.
-- ✅ **Design-to-Code Audit** - Comparing code with Figma to reach pixel-perfection.
-- ✅ **AgentSkills Specification** - Fully compliant with the [AgentSkills.io](https://agentskills.io) format.
+- ✅ **Graph-First Architecture** - Extracts deep node trees with full layout precision.
+- ✅ **Design Tokens Support** - Resolves Figma Variables (Enterprise) & Styles to proper CSS/Tailwind variables.
+- ✅ **Surgical Data Extraction** - Fetches only the section you need, ensuring speed and reliability.
+- ✅ **Data Enrichment** - Automatically maps complex Figma IDs to human-readable names and semantic tokens.
 
-## ⚙️ Quick Start & Installation
+## ⚙️ Quick Start
 
-### 1. Install Global CLI
-
-Run this command once to install the tool on your machine:
+### 1. Installation
 
 ```bash
 npm install -g @ckim03/figma-agent
 ```
 
-**Alternative:** Install from GitHub or clone locally:
-
-```bash
-# From GitHub
-npm install -g git+https://github.com/TranVanTienDat/figma-agent.git
-
-# Or clone and link
-git clone https://github.com/TranVanTienDat/figma-agent.git
-cd figma-agent
-npm link
-```
-
-### 2. Initialize Any Project
+### 2. Initialize Project
 
 To add Figma-to-Code capabilities to your current project, simply run:
 
@@ -46,127 +27,85 @@ To add Figma-to-Code capabilities to your current project, simply run:
 figma-agent
 ```
 
-_This command will copy the necessary AI Skills and Slash Commands into your project folder._
+_This command will copy the necessary AI Skills and **Core Scripts** into your project folder `.agent/`._
 
-### 1. Sync Project Context
+### 3. Setup Project Context
 
 **Action**: Read `AGENTS.md` in the project root.
 
-- **Why**: To ensure analysis respects project-specific tech stack and coding conventions.
-
-### 2. Activate Figma Analysis Skill
-
-Ensure your `FigmaAIBridge` is configured with a valid token in your MCP settings (`~/.config/mcp/config.json`).
+- **Why**: To ensure analysis respects your project-specific tech stack and coding conventions.
 
 ---
 
-## 🚀 Antigravity Workflow (The 5-Step Pipeline)
+## 🚀 Antigravity Workflow (The New Standard)
 
 This tool is optimized for **Antigravity**. Use these slash commands in your chat to move from design to code seamlessly.
 
-### Step 1: Initialize Project Context
+### Phase 1: Foundation (Sync)
 
-**Command:** `/figma-init`
+**Command:** `/sync-figma-data`
 
-- **Action**: Creates the mandatory `AGENTS.md` file in the project root.
-- **Result**: Establishes your tech stack (Next.js, Tailwind, etc.) and coding standards as the Single Source of Truth for all subsequent AI actions.
+- **Action**: Fetches the File Structure, Component Library, and Raw Styles.
+- **Output**: Populates `figma-agent/data/` with the design system DNA.
 
-### Step 2: Extract Design Anatomy
+**Command:** `/figma-map-tokens`
 
-**Command:** `/figma-review [figma_url]`
+- **Action**: Converts raw styles into a usable `tokens.json` map.
+- **Output**: `figma-agent/data/tokens.json`.
 
-- **Action**: Establishes the `figma-agent/` directory based on the `AGENTS.md` context.
-- **Result**: Extracts global tokens (colors, typography) and creates organized section folders (Header, Hero, Features, etc.) with `specs.md`.
+### Phase 2: Implementation (Deep Dive)
 
-### Step 3: Exhaustive Deep Dive
+**Command:** `python3 .agent/skills/figma-analysis/scripts/figma_cli.py nodes <KEY> <ID>`
 
-**Command:** `/get-figma-info [section_page] [selection_link]`
+- **Action**: Extracts pixel-perfect layout data for a specific UI section.
+- **Result**: A clean, enriched JSON file ready for AI code generation.
 
-- **Action**: Captures actual overrides and pixel-precise layout for a specific UI zone.
-- **Result**: Populates `figma-agent/pages/[page-name]/[section-page]/data.json`.
+---
 
-### Step 4: Architect the Code
+## 💻 Developer Integration
 
-**Command:** `/figma-build [section_name] [link selection]`
-
-- **Action**: Triggers the `figma-to-code` AI architect to build production code.
-- **Result**: Generates a professional React/Next.js component following the rules in `AGENTS.md`.
-
-### Step 5: Pixel-Perfect Audit
-
-**Command:** `/figma-audit [section_name] [selection_link]`
-
-- **Action**: Compares existing code against Figma selection.
-- **Result**: Actionable plan to reach 100% pixel-perfection.
-
-## 💻 Developer Integration Guide
-
-Once tokens and metadata are extracted into `figma-agent/`, you can integrate them into your code manually or via automation.
-
-### Using Global Tokens (Tailwind Example)
+### Integrating Tokens (Tailwind)
 
 In your `tailwind.config.js`:
 
 ```javascript
-const colors = require("./figma-agent/common/colors/system-colors.json");
+const tokens = require("./figma-agent/data/tokens.json");
 
 module.exports = {
   theme: {
     extend: {
-      colors: colors.brand, // Automatically use Figma colors
+      colors: tokens.colors, // Automagically mapped from Figma
+      fontFamily: tokens.typography,
     },
   },
 };
 ```
 
-### Manual Component Implementation
+### Generating Code
 
-The `data.json` provides everything you need to build custom components:
+Once you have extracted the data for a Node (Phase 2), simply ask the Agent:
 
-```tsx
-import headerData from "./figma-agent/pages/landing-page/header-nav/data.json";
-
-const Header = () => {
-  const { padding, gap } = headerData.layout;
-  return (
-    <header style={{ padding: `${padding.top}px`, gap: `${gap}px` }}>
-      {/* Build UI based on Figma DOM tree */}
-    </header>
-  );
-};
-```
+> "Build the 'Header' component using `figma-agent/pages/header/data.json`. Use the tokens from `figma-agent/data/tokens.json`."
 
 ---
 
-## 📁 Standardized Directory Structure (`figma-agent/`)
-
-The tool organizes data following a clean, scalable architecture:
+## 📁 Directory Structure
 
 ```
 figma-agent/
-├── common/                         # Shared Design System (General project info)
-│   ├── colors/
-│   │   └── system-colors.json      # Global color tokens
-│   ├── typography/
-│   │   └── text-presets.json      # Global font presets
-│   └── variants/                   # Global component variants
+├── data/                       # 🟢 The Source of Truth
+│   ├── file-structure.json     # Overview of Pages/Frames
+│   ├── components.json         # Component Library
+│   ├── styles.json             # Raw Styles
+│   └── tokens.json             # Processed Token Map (Ready for Dev)
 │
-└── pages/                          # All project pages
-    └── [page-name]/                # Data for a specific page (e.g., landing-page)
-        └── [section-page]/         # Examples: header-nav, sidebar, chat-list
-            ├── data.json           # Exhaustive layout & children metadata
-            ├── specs.md            # Technical documentation & display logic
-            ├── components/         # Generated .tsx components (local to section)
-            └── images/                 # Downloaded SVG/PNG assets
+└── pages/                      # 🟡 Implementation Details
+    └── [page-name]/
+        └── [section-name]/
+            └── data.json       # Deep extract of a specific UI part
 ```
-
-## 📚 Documentation & Reference
-
-- **[Installation Guide](INSTALL.md)** - Connectivity and setup.
-- **[Quick Reference](QUICK_REFERENCE.md)** - Command cheat sheet.
-- **[Project Hub](DOCS_INDEX.md)** - Documentation index.
 
 ---
 
 **Built with ❤️ for Antigravity Developers**  
-_Inspired by professional design-to-code specifications._
+_Powered by the new Graph-First Core Architecture._

@@ -7,6 +7,24 @@ This directory contains Python scripts for advanced Figma metadata extraction an
 - **Python**: Version 3.9 or higher
 - **Figma Personal Access Token**: Required for API access
 
+### 🐍 How to Install Python
+
+**macOS** (using Homebrew):
+
+```bash
+brew install python
+```
+
+**Windows**:
+Download the installer from [python.org](https://www.python.org/downloads/windows/). Make sure to check **"Add Python to PATH"** during installation.
+
+**Linux (Ubuntu/Debian)**:
+
+```bash
+sudo apt update
+sudo apt install python3 python3-pip
+```
+
 ## 🚀 Quick Setup
 
 ### Step 1: Install Python Dependencies

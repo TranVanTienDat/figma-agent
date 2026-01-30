@@ -19,10 +19,9 @@
 
 ### 4. Workflows (Automation)
 
-- **[/figma-review](.agent/workflows/figma-review.md)**: Design-to-specification analysis.
-- **[/get-figma-info](.agent/workflows/get-figma-info.md)**: Data extraction pipeline.
+- **[/figma-config](.agent/workflows/figma-config.md)**: Project context & rules setup.
+- **[/sync-figma-data](.agent/workflows/sync-figma-data.md)**: Data extraction pipeline.
 - **[/figma-build](.agent/workflows/figma-build.md)**: Code production pipeline.
-- **[/figma-audit](.agent/workflows/figma-audit.md)**: Design-to-code alignment audit.
 
 ---
 

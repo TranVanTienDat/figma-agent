@@ -7,17 +7,30 @@ from figma_core.client import FigmaClient
 from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv()
+# Try searching for .env in current directory or script's root
+dotenv_path = os.path.join(os.getcwd(), '.env')
+if not os.path.exists(dotenv_path):
+    # Fallback to script directory's parent (assuming .agent/skills/...)
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    dotenv_path = os.path.join(script_dir, '../../../../', '.env')
+
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path=dotenv_path)
+else:
+    load_dotenv() # Default search
 
 def main():
     parser = argparse.ArgumentParser(description="Advanced Figma Data Extraction Tool")
+    
+    # ... [rest of the function]
+    # (I'll just add the debug print inside main)
     
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
     
     # Subcommand: file
     parser_file = subparsers.add_parser("file", help="Get full file data (use with caution on large files)")
     parser_file.add_argument("file_key", help="Figma File Key")
-    parser_file.add_argument("--depth", type=int, help="Depth of the tree to traverse")
+    # Depth removed to enforce recursive full fetch
     parser_file.add_argument("--summary", action="store_true", help="Analyze and print a summary of node types")
     
     # Subcommand: nodes
@@ -25,9 +38,6 @@ def main():
     parser_nodes.add_argument("file_key", help="Figma File Key")
     parser_nodes.add_argument("node_ids", help="Comma-separated list of Node IDs (e.g., 1:2,3:4)")
     
-    # Subcommand: images
-    parser_images = subparsers.add_parser("images", help="Get image fill URLs")
-    parser_images.add_argument("file_key", help="Figma File Key")
 
     # Subcommand: components
     parser_components = subparsers.add_parser("components", help="Get published components")
@@ -36,6 +46,21 @@ def main():
     # Subcommand: styles
     parser_styles = subparsers.add_parser("styles", help="Get published styles")
     parser_styles.add_argument("file_key", help="Figma File Key")
+
+    # Subcommand: local-variables (Enterprise)
+    parser_vars = subparsers.add_parser("local-variables", help="Get local variables (Enterprise)")
+    parser_vars.add_argument("file_key", help="Figma File Key")
+
+    # Subcommand: images
+    parser_images = subparsers.add_parser("images", help="Get image URLs for nodes")
+    parser_images.add_argument("file_key", help="Figma File Key")
+    parser_images.add_argument("node_ids", help="Comma-separated Node IDs")
+    parser_images.add_argument("--format", default="svg", help="Image format (svg, png, jpg, pdf)")
+    parser_images.add_argument("--scale", type=float, default=1, help="Image scale")
+
+    # Subcommand: extract-tokens (Local)
+    parser_extract = subparsers.add_parser("extract-tokens", help="Extract tokens from local JSON file (X-Ray Scan)")
+    parser_extract.add_argument("input_file", help="Path to input JSON file")
 
     # Global arguments
     parser.add_argument("--token", help="Figma Personal Access Token")
@@ -50,13 +75,14 @@ def main():
         sys.exit(1)
         
     client = FigmaClient(token)
+    print(f"🔓 Login success. Token loaded from {dotenv_path if os.path.exists(dotenv_path) else 'environment'}.")
     
     # 2. Command Execution
     try:
         data = None
         if args.command == "file":
-            print(f"📡 Fetching file: {args.file_key} (Depth: {args.depth})...")
-            data = client.get_file(args.file_key, depth=args.depth)
+            print(f"📡 Fetching file: {args.file_key} (Full Tree)...")
+            data = client.get_file(args.file_key)
             
             if args.summary:
                 from figma_core.parser import FigmaParser
@@ -127,9 +153,6 @@ def main():
                 if "document" in node_wrapper:
                     data["nodes"][nid] = enricher.enrich_node(node_wrapper["document"])
 
-        elif args.command == "images":
-            print(f"📡 Fetching image fills for: {args.file_key}...")
-            data = client.get_image_fills(args.file_key)
 
         elif args.command == "components":
             print(f"📡 Fetching published components for: {args.file_key}...")
@@ -138,6 +161,63 @@ def main():
         elif args.command == "styles":
             print(f"📡 Fetching published styles for: {args.file_key}...")
             data = client.get_published_styles(args.file_key)
+
+        if args.command == "local-variables":
+            print(f"📡 Fetching local variables for: {args.file_key}...")
+            data = client.get_local_variables(args.file_key)
+            if not data:
+                print("⚠️  No local variables found or access denied (Enterprise feature).")
+                data = {}
+
+        elif args.command == "images":
+            nodes_list = args.node_ids.split(",")
+            print(f"📡 Fetching images for nodes: {nodes_list} ({args.format})...")
+            data = client.get_images(args.file_key, nodes_list, format=args.format, scale=args.scale)
+
+        elif args.command == "extract-tokens":
+            print(f"🔍 Extracting tokens from: {args.input_file} (X-Ray Mode)...")
+            
+            if not os.path.exists(args.input_file):
+                print(f"❌ Error: Input file not found: {args.input_file}")
+                sys.exit(1)
+                
+            with open(args.input_file, 'r') as f:
+                raw_json = json.load(f)
+                
+            # Normalize input to list of root nodes
+            root_nodes = []
+            if isinstance(raw_json, dict):
+                if "nodes" in raw_json:
+                    # Output from 'nodes' command
+                    for nid, val in raw_json["nodes"].items():
+                        # Check if it is raw (has "document") or enriched (is the node itself)
+                        if "document" in val:
+                            root_nodes.append(val["document"])
+                        else:
+                            root_nodes.append(val)
+                elif "document" in raw_json:
+                    # Output from 'file' command
+                    root_nodes.append(raw_json["document"])
+                else:
+                    # Just a single node object?
+                    root_nodes.append(raw_json)
+            elif isinstance(raw_json, list):
+                root_nodes = raw_json
+                
+            # Flatten recursively
+            from figma_core.parser import FigmaParser, DesignTokenExtractor
+            all_nodes = []
+            
+            # Helper parser to flatten tree
+            # We construct a fake document wrapper to leverage existing flatten_tree
+            p = FigmaParser({"document": {"children": root_nodes}})
+            all_nodes = p.flatten_tree()
+            
+            print(f"   📊 Analyzing {len(all_nodes)} nodes...")
+            
+            extractor = DesignTokenExtractor(all_nodes)
+            data = extractor.extract()
+            print(f"   ✨ Found {len(data['colors'])} unique colors and {len(data['typography'])} font styles.")
             
         else:
             parser.print_help()

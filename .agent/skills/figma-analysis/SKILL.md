@@ -221,10 +221,9 @@ Provide a code skeleton based on the tech stack in `AGENTS.md` (e.g., TSX, JSX, 
 
 To ensure the project is organized scientifically, all analysis data must comply with the following structure:
 
-1.  **figma-agent/common/**: Stores general project-wide information (Colors, Typography, Effects, Shared Variants). This is the single "source of truth" for the Design System.
-2.  **figma-agent/pages/**: The root directory containing information for all pages in the project.
-3.  **figma-agent/pages/[page-name]/**: Directory containing specific data for a single page (e.g., `landing-page`, `dashboard`).
-4.  **figma-agent/pages/[page-name]/[section-page]/**: Directory containing detailed information about each Section (UI design zone) within that page. Each section will have `data.json`, `specs.md`, and child components.
+1.  **figma-agent/data/**: Stores synced design data from Figma (file structure, components, styles, tokens). This is the primary source of truth for the raw design data.
+2.  **figma-agent/common/**: Stores general project-wide information (Colors, Typography, Effects, Shared Variants). This is the single "source of truth" for the Design System.
+3.  **figma-agent/[section-name]/**: Directory containing detailed information about each Section (UI design zone) or Page within the project. Each section will have `data.json`, `specs.md`, and child components.
 
 ## 💾 Data Storage Structure
 
@@ -232,21 +231,18 @@ Extracted data will be saved to `figma-agent/` according to the following diagra
 
 ```
 figma-agent/
-├── common/                         # Shared Design System (General project info)
+├── config.yaml                     # Tech Stack & Custom Rules
+├── data/                           # Raw Figma sync data
+│   ├── file-structure.json
+│   ├── styles.json
+│   └── components.json
+├── common/                         # Shared Design System
 │   ├── colors/
-│   │   └── system-colors.json      # Global color tokens
-│   ├── typography/
-│   │   └── text-presets.json      # Global font presets
-│   ├── styles/
-│   │   └── effects.json           # Glassmorphism, Glows, Radial Gradients
-│   └── variants/                   # Global component variants
-│
-└── pages/                          # All project pages
-    └── [page-name]/                # Data for a specific page
-        └── [section-page]/         # UI Section information within that page
-            ├── data.json           # Layout metadata & node tree structure
-            ├── specs.md            # Technical documentation & display logic
-            └── components/         # Child components generated for this section
+│   └── variants/
+└── [section-name]/                 # UI Section/Page information
+    ├── data.json                   # Layout metadata & node tree structure
+    ├── specs.md                    # Technical documentation & display logic
+    └── components/                 # Child components
 ```
 
 ## 📝 data.json Schema
@@ -344,6 +340,15 @@ figma-agent/
 - Converting design handoff to development tasks
 - User runs `/figma-review` workflow
 
+## ⚡ Handling Large Files & Performance
+
+When dealing with complex Figma files (e.g., SaaS Dashboards with thousands of nodes), extraction can be slow. Apply these optimizations:
+
+1.  **Reduce Initial Depth**: Use `--depth 1` or `2` for the initial `file-structure.json` to get the high-level layout quickly.
+2.  **Targeted Extraction**: Always prefer extracting specific nodes using their `node-id` instead of full page sync.
+3.  **Rate Limit Awareness**: The tool handles 429 errors automatically using `Retry-After`. Stay patient if you see "Rate Limited" logs.
+4.  **Data Partitioning**: Split large pages into smaller logical "Sections" or "Components" to reduce JSON payload size and AI context usage.
+
 ## 🔍 Analysis Workflow (Exhaustive Deep Dive Mode)
 
 1.  **Phase 1: Recursive X-Ray Scan**
@@ -423,16 +428,16 @@ Detect and document:
 
 ```
 figma-agent/
+├── data/
+│   ├── styles.json
+│   └── components.json
 ├── common/
-│   ├── colors/system-colors.json     # { "primary": "#FF0000" }
-│   └── components/Button.json       # Master Button definition
-└── pages/
-    └── dashboard/                   # [page-name]
-        └── sidebar-nav/             # [section-page]
-            ├── data.json            # Layout & Layer metadata for Sidebar
-            ├── specs.md             # Interaction logic & variants
-            └── components/
-                └── NavItem.tsx      # Generated specific child component
+│   └── components/Button.json
+└── sidebar/                         # [section-name]
+    ├── data.json                   # Layout & Layer metadata for Sidebar
+    ├── specs.md                    # Interaction logic & variants
+    └── components/
+        └── NavItem.tsx             # Generated specific child component
 ```
 
 ### data.json (Section UI) Example

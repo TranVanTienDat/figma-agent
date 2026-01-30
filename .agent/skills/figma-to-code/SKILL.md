@@ -15,16 +15,12 @@ metadata:
 
 ## 🏗️ Core (Core System)
 
-1.  **MANDATORY: Read AGENTS.md First**: Always read `AGENTS.md` at the project root before ANY code generation. This file is the absolute source of truth for the Tech Stack, Folder Structure, Naming Conventions, and Project Standards.
-2.  **Core Architecture Compliance**: Code generation must respect the data organizational structure:
-    - `figma-agent/common/`: Shared project information (Design Tokens, Shared Components).
-    - `figma-agent/pages/`: All page-related data.
-    - `figma-agent/pages/[page-name]/`: Specific data for a single page.
-    - `figma-agent/pages/[page-name]/[section-page]/`: Specific UI section analysis, data, and specs.
-3.  **Token System**: Always reference extracted design tokens from `figma-agent/common/`. Build a robust variable system for Colors, Typography, and Shadows directly mapped from these tokens.
-4.  **Component Reuse**: Prioritize using shared components found in `figma-agent/common/components/`. Additionally, check `common/variants/` for global component variations. If a node matches a global definition, import it rather than re-creating it.
-5.  **Compliance**: Strictly adhere to the Framework, Language, and Styling system specified in the project context.
-6.  **No Assumptions**: Never hard-code technologies or assume libraries unless they are explicitly listed in `AGENTS.md`.
+1.  **MANDATORY: Extensive Context Reading**: Before starting ANY code generation, the agent MUST read `figma-agent/config.yaml` and the content of the split data directories in `figma-agent/*` (starting with `00-summary.json`). Valid data is now split into multiple focused files (summary, structure, texts, etc.) for better accuracy.
+2.  **Core Architecture Compliance**: All design data and configurations are centralized in the `figma-agent/` directory.
+3.  **Token System**: Build the variable system by reading `05-colors.json` (for color palette) and `02-texts.json` (for typography styles) located in the split data directory. Do NOT look for a single `tokens.json`.
+4.  **Component Reuse**: Check `03-instances.json` in the split directory to identify component instances. If a node matches a known design system component, use the shared component instead of rebuilding it.
+5.  **Compliance**: Strictly adhere to the Framework, Language, and Styling system specified in `figma-agent/config.yaml`.
+6.  **No Assumptions**: Never hard-code technologies. If a configuration is missing in `config.yaml`, ask the user for clarification.
 
 ## 📋 Requirements (Technical Standards)
 
@@ -73,25 +69,25 @@ metadata:
 
 ## 📚 Implementation Examples
 
-### 1. Mapping Tokens to CSS (from `common/`)
+### 1. Mapping Tokens to CSS (from `data/`)
 
 ```css
 /* src/styles/tokens.css */
 :root {
-  /* Values sourced from figma-agent/common/colors/system-colors.json */
+  /* Values sourced from figma-agent/data/tokens.json */
   --color-primary: #ff3b30;
   --color-bg-dashboard: #f8f9fa;
 
-  /* Values sourced from figma-agent/common/typography/text-presets.json */
+  /* Typography presets from tokens.json */
   --font-h1: 700 32px/40px "Inter", sans-serif;
 }
 ```
 
-### 2. Building a Page Section (from `pages/[page-name]/[section-page]`)
+### 2. Building a UI Component (from `figma-agent/[section-name]`)
 
 ```tsx
-// src/components/pages/dashboard/Sidebar.tsx
-// Uses layout from figma-agent/pages/dashboard/sidebar-nav/data.json
+// src/components/Sidebar.tsx
+// Uses layout from figma-agent/sidebar/data.json
 import { Button } from "../../common/Button"; // Reusing common atoms
 
 export const Sidebar = () => {
@@ -99,7 +95,7 @@ export const Sidebar = () => {
     <aside className="w-[280px] h-full flex flex-col gap-3 p-4 bg-white border-r">
       <h2 className="text-lg font-bold">Menu</h2>
       <nav className="flex flex-col gap-2">
-        {/* Mapping instances found in data.json */}
+        {/* Mapping instances found in parsed data.json */}
         <Button variant="ghost" label="Dashboard" active />
         <Button variant="ghost" label="Settings" />
       </nav>

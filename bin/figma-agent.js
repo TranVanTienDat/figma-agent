@@ -33,18 +33,70 @@ function copyDir(src, dest) {
     }
     return true;
   } catch (err) {
-    console.error(`❌ Error copying ${src} to ${dest}:`, err.message);
+    const red = "\x1b[31m";
+    const reset = "\x1b[0m";
+    console.error(
+      `${red}❌ Error copying ${src} to ${reset}${dest}:`,
+      err.message,
+    );
     return false;
   }
 }
 
+/**
+ * Initialize Figma Agent structure
+ */
+function initFigmaAgentStructure(destDir) {
+  const figmaAgentDir = path.join(destDir, "figma-agent");
+
+  // 1. Create base directory
+  if (!fs.existsSync(figmaAgentDir)) {
+    fs.mkdirSync(figmaAgentDir, { recursive: true });
+    console.log("✅ Created: figma-agent/");
+  }
+
+  // 2. Create subdirectories
+  const folders = ["data", "common"];
+  folders.forEach((folder) => {
+    const folderPath = path.join(figmaAgentDir, folder);
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
+      console.log(`✅ Created: figma-agent/${folder}/`);
+    }
+  });
+
+  // 3. Create config.yaml
+  const srcConfigPath = path.join(packageDir, "figma-agent", "config.yaml");
+  const destConfigPath = path.join(figmaAgentDir, "config.yaml");
+
+  if (fs.existsSync(srcConfigPath)) {
+    if (!fs.existsSync(destConfigPath)) {
+      fs.copyFileSync(srcConfigPath, destConfigPath);
+      console.log("✅ Created: figma-agent/config.yaml");
+    } else {
+      console.log("⏭️  Exists: figma-agent/config.yaml");
+    }
+  } else {
+    // Fallback if source file is missing (should not happen in correct build)
+    console.warn("⚠️  Warning: Template config.yaml not found in package.");
+  }
+}
+
 async function main() {
-  console.log("\n🚀 Starting @ckim03/figma-agent installation...\n");
+  const reset = "\x1b[0m";
+  const bold = "\x1b[1m";
+  const cyan = "\x1b[36m";
+  const green = "\x1b[32m";
+  const yellow = "\x1b[33m";
+
+  console.log(
+    `\n🚀 ${bold}Starting @ckim03/figma-agent installation...${reset}\n`,
+  );
 
   // 1. Check if we are in a valid directory
   if (fs.existsSync(path.join(targetDir, ".agent"))) {
-    console.log(
-      "⚠️  Warning: .agent folder already exists. Some files might be overwritten.",
+    console.warn(
+      `${yellow}⚠️  Warning: .agent folder already exists. Some files might be overwritten.${reset}`,
     );
   }
 
@@ -63,30 +115,26 @@ async function main() {
     process.exit(1);
   }
 
-  // 4. Run the initialization script for figma-agent data folders
-  const initScript = path.join(
-    agentDest,
-    "skills/figma-analysis/scripts/init-figma-agents.js",
-  );
-  if (fs.existsSync(initScript)) {
-    console.log("📦 Initializing project data structure...");
-    try {
-      execSync(`node "${initScript}"`, { stdio: "inherit" });
-    } catch (err) {
-      console.error(
-        "⚠️  Data initialization script failed, but skills were copied.",
-      );
-    }
-  }
+  // 4. Initialize structure and config
+  console.log("📦 Initializing project data structure...");
+  initFigmaAgentStructure(targetDir);
 
-  console.log("\n✨ INSTALLATION COMPLETE! ✨\n");
-  console.log("Your project is now equipped with Figma-to-Code powers.");
-  console.log("Try using these commands in the Antigravity chat:");
-  console.log("  /figma-review    - Extract design system tokens");
-  console.log("  /get-figma-info  - Deep dive into a specific UI section");
-  console.log("  /figma-build     - Generate React/HTML code from Figma");
+  console.log(`\n${bold}${green}✨ INSTALLATION COMPLETE! ✨${reset}\n`);
   console.log(
-    "  /figma-audit     - Audit existing code against Figma design\n",
+    `${bold}Your project is now equipped with Figma-to-Code powers.${reset}`,
+  );
+  console.log("\nTry using these commands in the Antigravity chat:");
+  console.log(
+    `  ${cyan}/figma-config${reset}     - Auto-configure project context & rules`,
+  );
+  console.log(
+    `  ${cyan}/sync-figma-data${reset}  - Sync latest data from your Figma Design`,
+  );
+  console.log(
+    `  ${cyan}/figma-map-tokens${reset} - Transform Figma styles into Design Tokens`,
+  );
+  console.log(
+    `  ${cyan}/figma-build${reset}      - Generate React/Next.js code from Figma\n`,
   );
 }
 

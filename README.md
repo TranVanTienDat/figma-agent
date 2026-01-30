@@ -1,111 +1,100 @@
-# Figma Agent Integration Tool
+# 🚀 Figma Agent: Design-to-Code Powerhouse
 
-> 🎨 A comprehensive Figma-to-code extraction system for Antigravity, specifically designed for professional developer workflows.
+Figma Agent là bộ công cụ mạnh mẽ dành cho Antigravity AI, giúp chuyển đổi thiết kế từ Figma thành mã nguồn React/Next.js chất lượng cao, chuẩn SEO và dễ bảo trì. Công cụ tập trung vào độ chính xác tuyệt đối (Pixel-Perfect) và tối ưu hóa hiệu suất với các tệp thiết kế lớn.
 
-## 🌟 Overview
+---
 
-**@cam/figma-agent** automatically transforms Figma designs into structured data and production-ready code. It covers the entire lifecycle of UI implementation:
+## 🛠 Cài đặt
 
-- ✅ **Graph-First Architecture** - Extracts deep node trees with full layout precision.
-- ✅ **Design Tokens Support** - Resolves Figma Variables (Enterprise) & Styles to proper CSS/Tailwind variables.
-- ✅ **Surgical Data Extraction** - Fetches only the section you need, ensuring speed and reliability.
-- ✅ **Data Enrichment** - Automatically maps complex Figma IDs to human-readable names and semantic tokens.
+### 1. Yêu cầu hệ thống
 
-## ⚙️ Quick Start
+- **Node.js**: >= 18.0.0
+- **Python**: 3.x (cùng thư viện `requests` và `python-dotenv`)
 
-### 1. Installation
+### 2. Cài đặt Global
+
+Tại thư mục gốc của dự án công cụ này, chạy:
 
 ```bash
-npm install -g @ckim03/figma-agent
+npm install -g .
 ```
 
-### 2. Initialize Project
+### 3. Cấu hình môi trường
 
-To add Figma-to-Code capabilities to your current project, simply run:
+Bạn có thể cấu hình Token qua file `.env` hoặc trực tiếp qua Terminal:
+
+**Cách 1: Sử dụng file `.env` (Khuyên dùng)**
+Tạo file `.env` tại thư mục gốc dự án:
+
+```env
+FIGMA_ACCESS_TOKEN=your_personal_access_token
+```
+
+**Cách 2: Sử dụng lệnh Export (Terminal)**
+
+- **Thiết lập**: `export FIGMA_ACCESS_TOKEN=your_token`
+- **Kiểm tra**: `echo $FIGMA_ACCESS_TOKEN`
+- **Xóa**: `unset FIGMA_ACCESS_TOKEN`
+
+---
+
+## 🔄 Quy trình chuẩn (Workflow)
+
+Để đạt hiệu quả cao nhất, hãy tuân thủ quy trình 5 bước sau:
+
+### Bước 1: Khởi tạo (Lần đầu)
+
+Trong thư mục dự án của bạn (nơi chứa code Web), chạy:
 
 ```bash
 figma-agent
 ```
 
-_This command will copy the necessary AI Skills and **Core Scripts** into your project folder `.agent/`._
+Lệnh này tạo thư mục `figma-agent/` - trung tâm điều khiển của AI.
 
-### 3. Setup Project Context
+### Bước 2: Thiết lập Tech Stack
 
-**Action**: Read `AGENTS.md` in the project root.
+Trong khung chat Antigravity, gõ:
+**`/figma-config`**
+AI sẽ đọc cấu trúc dự án (Tailwind, TypeScript,...) để đảm bảo code sinh ra luôn tương thích hoàn toàn.
 
-- **Why**: To ensure analysis respects your project-specific tech stack and coding conventions.
+### Bước 3: Đồng bộ dữ liệu Figma
 
----
+Tải dữ liệu thiết kế về máy:
+**`/sync-figma-data [Figma-Link]`**
+_Mẹo: Tool hỗ trợ Auto-Retry nếu gặp giới hạn API của Figma (Rate Limit)._
 
-## 🚀 Antigravity Workflow (The New Standard)
+### Bước 4: Chuyển đổi Tokens (Tùy chọn)
 
-This tool is optimized for **Antigravity**. Use these slash commands in your chat to move from design to code seamlessly.
+Chuyển đổi các Styles từ Figma thành biến CSS/JSON:
+**`/figma-map-tokens`**
 
-### Phase 1: Foundation (Sync)
+### Bước 5: Build UI
 
-**Command:** `/sync-figma-data`
-
-- **Action**: Fetches the File Structure, Component Library, and Raw Styles.
-- **Output**: Populates `figma-agent/data/` with the design system DNA.
-
-**Command:** `/figma-map-tokens`
-
-- **Action**: Converts raw styles into a usable `tokens.json` map.
-- **Output**: `figma-agent/data/tokens.json`.
-
-### Phase 2: Implementation (Deep Dive)
-
-**Command:** `python3 .agent/skills/figma-analysis/scripts/figma_cli.py nodes <KEY> <ID>`
-
-- **Action**: Extracts pixel-perfect layout data for a specific UI section.
-- **Result**: A clean, enriched JSON file ready for AI code generation.
+Bắt đầu tạo code bằng ngôn ngữ tự nhiên:
+**`/figma-build Build cho tôi Section Header chuẩn Responsive.`**
 
 ---
 
-## 💻 Developer Integration
+## 📂 Cấu trúc Thư mục `figma-agent/`
 
-### Integrating Tokens (Tailwind)
+Hệ thống quản lý dữ liệu tập trung và minh bạch:
 
-In your `tailwind.config.js`:
-
-```javascript
-const tokens = require("./figma-agent/data/tokens.json");
-
-module.exports = {
-  theme: {
-    extend: {
-      colors: tokens.colors, // Automagically mapped from Figma
-      fontFamily: tokens.typography,
-    },
-  },
-};
-```
-
-### Generating Code
-
-Once you have extracted the data for a Node (Phase 2), simply ask the Agent:
-
-> "Build the 'Header' component using `figma-agent/pages/header/data.json`. Use the tokens from `figma-agent/data/tokens.json`."
+- `config.yaml`: Chứa bối cảnh dự án (Tech Stack, quy tắc code).
+- `data/`: Dữ liệu thô đồng bộ từ Figma (styles, components, file structure).
+- `common/`: Các Design Tokens và Assets dùng chung cho toàn dự án.
+- `[section-name]/`: Dữ liệu chi tiết cho từng phần/trang cụ thể (specs, data.json).
 
 ---
 
-## 📁 Directory Structure
+## ⚡ Tối ưu cho Dự án Lớn
 
-```
-figma-agent/
-├── data/                       # 🟢 The Source of Truth
-│   ├── file-structure.json     # Overview of Pages/Frames
-│   ├── components.json         # Component Library
-│   ├── styles.json             # Raw Styles
-│   └── tokens.json             # Processed Token Map (Ready for Dev)
-│
-└── pages/                      # 🟡 Implementation Details
-    └── [page-name]/
-        └── [section-name]/
-            └── data.json       # Deep extract of a specific UI part
-```
+- **Đồng bộ từng phần**: Sử dụng Node ID (trong link Figma) để chỉ đồng bộ phần bạn cần làm việc, giúp tiết kiệm thời gian và tài nguyên.
+  - Ví dụ: `/sync-figma-data [Link]?node-id=5965:18603`
+- **Context Awareness**: Mỗi khi build, AI sẽ tự động đọc **toàn bộ** thư mục `figma-agent/` để đảm bảo code sinh ra khớp 100% với hệ thống thiết kế hiện có.
 
 ---
 
-**Built with ❤️ for Antigravity Developers**  
-_Powered by the new Graph-First Core Architecture._
+## 👨‍💻 Tác giả
+
+Phát triển bởi **TranVanTienDat** 🚀

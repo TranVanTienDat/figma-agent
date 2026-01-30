@@ -50,9 +50,6 @@ function initDataStructure() {
 
   // Data directory
   ensureDir(path.join(baseDir, "data"));
-
-  // Default page directories
-  ensureDir(path.join(baseDir, "pages"));
 }
 
 /**
@@ -61,13 +58,14 @@ function initDataStructure() {
 function initSectionStructure(page, section) {
   console.log(`\n📁 Initializing section: ${page}/${section}...\n`);
 
-  // Removed "section-" prefix for cleaner naming
-  const sectionDir = path.join(baseDir, page, section);
+  // SectionDir is now directly under figma-agent or managed differently
+  // Since user wants to remove 'pages', let's simplify or put sections in data if needed
+  // However, usually sections might be in 'data' now.
+  const sectionDir = path.join(baseDir, section);
 
   // Section directories
   ensureDir(sectionDir);
   ensureDir(path.join(sectionDir, "components"));
-  ensureDir(path.join(sectionDir, "images"));
   ensureDir(path.join(sectionDir, "colors"));
 
   // Create data.json template
@@ -187,9 +185,8 @@ function main() {
 
   console.log("\n✨ Initialization complete!\n");
   console.log("Next steps:");
-  console.log("1. Run /get-figma-info to preview your Figma file");
-  console.log("2. Run /figma-review to extract design data");
-  console.log("3. Check figma-agent/ for extracted data\n");
+  console.log("1. Run /sync-figma-data to fetch your Figma design data");
+  console.log("2. Check figma-agent/ for extracted data\n");
 }
 
 // Run

@@ -1,27 +1,27 @@
 # Figma Agent
 
-Thư mục này chứa dữ liệu, cấu hình và tài liệu cho Figma Agent.
+This directory contains data, configuration, and documentation for Figma Agent.
 
-## 📂 Cấu trúc thư mục
+## 📂 Directory Structure
 
 ```
 figma-agent/
-├── data/                    # Chứa dữ liệu extracted từ Figma
-│   ├── footer-node.json     # File gốc (lớn)
-│   ├── footer-split-v2/     # ✅ Dữ liệu đã split (Recommended)
+├── data/                    # Contains extracted data from Figma
+│   ├── footer-node.json     # Original file (large)
+│   ├── footer-split-v2/     # ✅ Split data (Recommended)
 │   └── ...
-├── config.yaml              # Cấu hình agent
-├── FINAL-SOLUTION.md        # 📘 Tổng kết giải pháp split file
+├── config.yaml              # Agent configuration
+├── FINAL-SOLUTION.md        # 📘 Summary of split file solution
 ├── QUICK-REF.md             # ⚡ Quick reference guide
-├── RECURSIVE-SPLIT-GUIDE.md # 📖 Hướng dẫn recursive split
-└── SPLIT-DATA-GUIDE.md      # 🇻🇳 Hướng dẫn tiếng Việt
+├── RECURSIVE-SPLIT-GUIDE.md # 📖 Recursive split guide
+└── SPLIT-DATA-GUIDE.md      # 🇻🇳 Vietnamese specific guide
 ```
 
-## 🚀 Công cụ chính
+## 🚀 Main Tools
 
-### Script Split Data
+### Split Data Script
 
-Tự động chia nhỏ file Figma lớn thành các file nhỏ (200-300 dòng) để AI xử lý chính xác hơn.
+Automatically splits large Figma files into smaller files (200-300 lines) for more accurate AI processing.
 
 ```bash
 python3 ../.agent/skills/figma-analysis/scripts/split_node_data.py \
@@ -29,35 +29,35 @@ python3 ../.agent/skills/figma-analysis/scripts/split_node_data.py \
   --max-lines 250
 ```
 
-Xem chi tiết: [QUICK-REF.md](QUICK-REF.md)
+See details: [QUICK-REF.md](QUICK-REF.md)
 
-## 📚 Tài liệu quan trọng
+## 📚 Important Documentation
 
 1. **[FINAL-SOLUTION.md](FINAL-SOLUTION.md)** (Recommended)
-   - Tổng hợp đầy đủ nhất về giải pháp
-   - Cách sử dụng, kết quả, so sánh
+   - Most comprehensive summary of the solution
+   - Usage, results, comparison
    - Best practices
 
 2. **[QUICK-REF.md](QUICK-REF.md)**
-   - Tra cứu nhanh lệnh và options
-   - Thứ tự đọc file cho AI
+   - Quick reference for commands and options
+   - File reading order for AI
 
 3. **[RECURSIVE-SPLIT-GUIDE.md](RECURSIVE-SPLIT-GUIDE.md)**
-   - Giải thích cơ chế chia file đệ quy
-   - Cách cấu hình deep split
+   - Explanation of recursive file splitting mechanism
+   - How to configure deep split
 
 4. **[SPLIT-DATA-GUIDE.md](SPLIT-DATA-GUIDE.md)**
-   - Tài liệu hướng dẫn chi tiết bằng tiếng Việt
+   - Detailed documentation (Vietnamese)
 
 ## 🔄 Workflow
 
-Để build UI từ Figma data chính xác nhất:
+To build UI from Figma data most accurately:
 
-1. **Check size**: Kiểm tra file JSON gốc có lớn không (>1000 dòng).
-2. **Split**: Chạy script split data nếu file lớn.
-3. **Read**: Đọc `00-summary.json` trước, sau đó là `01-structure.json`.
-4. **Build**: Đọc từng file trong thư mục `sections/` để build từng phần component.
+1. **Check size**: Check if the original JSON file is large (>1000 lines).
+2. **Split**: Run the split data script if the file is large.
+3. **Read**: Read `00-summary.json` first, then `01-structure.json`.
+4. **Build**: Read each file in the `sections/` directory to build each component part.
 
 ---
 
-**Lưu ý**: Luôn ưu tiên sử dụng dữ liệu đã split trong thư mục `data/*-split/` thay vì file JSON gốc để đảm bảo độ chính xác cao nhất (95% vs 10%).
+**Note**: Always prioritize using split data in the `data/*-split/` directories instead of the original JSON file to ensure highest accuracy (95% vs 10%).

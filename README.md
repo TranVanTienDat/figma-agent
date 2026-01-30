@@ -1,100 +1,116 @@
 # 🚀 Figma Agent: Design-to-Code Powerhouse
 
-Figma Agent là bộ công cụ mạnh mẽ dành cho Antigravity AI, giúp chuyển đổi thiết kế từ Figma thành mã nguồn React/Next.js chất lượng cao, chuẩn SEO và dễ bảo trì. Công cụ tập trung vào độ chính xác tuyệt đối (Pixel-Perfect) và tối ưu hóa hiệu suất với các tệp thiết kế lớn.
+Figma Agent is a powerful toolkit for Antigravity AI, enabling the conversion of specific Figma designs into high-quality, SEO-friendly, and maintainable React/Next.js source code. The tool focuses on pixel-perfect accuracy and performance optimization for large design files.
 
 ---
 
-## 🛠 Cài đặt
+## 🛠 Installation
 
-### 1. Yêu cầu hệ thống
+### 1. System Requirements
 
 - **Node.js**: >= 18.0.0
-- **Python**: 3.x (cùng thư viện `requests` và `python-dotenv`)
+- **Python**: 3.x (with `requests` and `python-dotenv` libraries)
 
-### 2. Cài đặt Global
+### 2. Global Installation
 
-Chạy lệnh sau:
+Run the following command:
 
 ```bash
 npm install -g @ckim03/figma-agent
 ```
 
-### 3. Cấu hình môi trường
+### 3. Environment Configuration
 
-Bạn có thể cấu hình Token qua file `.env` hoặc trực tiếp qua Terminal:
+You can configure the Token via a `.env` file or directly via the Terminal:
 
-**Cách 1: Sử dụng file `.env` (Khuyên dùng)**
-Tạo file `.env` tại thư mục gốc dự án:
+**Method 1: Using `.env` file (Recommended)**
+Create a `.env` file in the project root:
 
 ```env
 FIGMA_ACCESS_TOKEN=your_personal_access_token
 ```
 
-**Cách 2: Sử dụng lệnh Export (Terminal)**
+**Method 2: Using Export command (Terminal)**
 
-- **Thiết lập**: `export FIGMA_ACCESS_TOKEN=your_token`
-- **Kiểm tra**: `echo $FIGMA_ACCESS_TOKEN`
-- **Xóa**: `unset FIGMA_ACCESS_TOKEN`
+- **Set**: `export FIGMA_ACCESS_TOKEN=your_token`
+- **Check**: `echo $FIGMA_ACCESS_TOKEN`
+- **Remove**: `unset FIGMA_ACCESS_TOKEN`
+
+### 4. Antigravity MCP Setup
+
+Add the following configuration to your Antigravity settings to enable the Figma AI Bridge:
+
+```json
+{
+  "mcpServers": {
+    "FigmaAIBridge": {
+      "command": "npx",
+      "args": ["-y", "figma-developer-mcp", "--stdio"],
+      "env": {
+        "FIGMA_API_KEY": "888"
+      }
+    }
+  }
+}
+```
 
 ---
 
-## 🔄 Quy trình chuẩn (Workflow)
+## 🔄 Standard Workflow
 
-Để đạt hiệu quả cao nhất, hãy tuân thủ quy trình 5 bước sau:
+To achieve maximum efficiency, follow this 5-step process:
 
-### Bước 1: Khởi tạo (Lần đầu)
+### Step 1: Initialization (First time)
 
-Trong thư mục dự án của bạn (nơi chứa code Web), chạy:
+In your project directory (where the Web code is located), run:
 
 ```bash
 figma-agent
 ```
 
-Lệnh này tạo thư mục `figma-agent/` - trung tâm điều khiển của AI.
+This command creates the `figma-agent/` directory - the AI's control center.
 
-### Bước 2: Thiết lập Tech Stack
+### Step 2: Tech Stack Setup
 
-Trong khung chat Antigravity, gõ:
+In the Antigravity chat, type:
 **`/figma-config`**
-AI sẽ đọc cấu trúc dự án (Tailwind, TypeScript,...) để đảm bảo code sinh ra luôn tương thích hoàn toàn.
+The AI will analyze the project structure (Tailwind, TypeScript, etc.) to ensure the generated code is fully compatible.
 
-### Bước 3: Đồng bộ dữ liệu Figma
+### Step 3: Sync Figma Data
 
-Tải dữ liệu thiết kế về máy:
+Download design data to your machine:
 **`/sync-figma-data [Figma-Link]`**
-_Mẹo: Tool hỗ trợ Auto-Retry nếu gặp giới hạn API của Figma (Rate Limit)._
+_Tip: The tool supports Auto-Retry if it encounters Figma API limits (Rate Limit)._
 
-### Bước 4: Chuyển đổi Tokens (Tùy chọn)
+### Step 4: Map Tokens (Optional)
 
-Chuyển đổi các Styles từ Figma thành biến CSS/JSON:
+Convert Styles from Figma into CSS/JSON variables:
 **`/figma-map-tokens`**
 
-### Bước 5: Build UI
+### Step 5: Build UI
 
-Bắt đầu tạo code bằng ngôn ngữ tự nhiên:
-**`/figma-build Build cho tôi Section Header chuẩn Responsive.`**
-
----
-
-## 📂 Cấu trúc Thư mục `figma-agent/`
-
-Hệ thống quản lý dữ liệu tập trung và minh bạch:
-
-- `config.yaml`: Chứa bối cảnh dự án (Tech Stack, quy tắc code).
-- `data/`: Dữ liệu thô đồng bộ từ Figma (styles, components, file structure).
-- `common/`: Các Design Tokens và Assets dùng chung cho toàn dự án.
-- `[section-name]/`: Dữ liệu chi tiết cho từng phần/trang cụ thể (specs, data.json).
+Start generating code using natural language:
+**`/figma-build Build a responsive Header Section for me.`**
 
 ---
 
-## ⚡ Tối ưu cho Dự án Lớn
+## 📂 `figma-agent/` Directory Structure
 
-- **Đồng bộ từng phần**: Sử dụng Node ID (trong link Figma) để chỉ đồng bộ phần bạn cần làm việc, giúp tiết kiệm thời gian và tài nguyên.
-  - Ví dụ: `/sync-figma-data [Link]?node-id=5965:18603`
-- **Context Awareness**: Mỗi khi build, AI sẽ tự động đọc **toàn bộ** thư mục `figma-agent/` để đảm bảo code sinh ra khớp 100% với hệ thống thiết kế hiện có.
+Centralized and transparent data management system:
+
+- `config.yaml`: Contains project context (Tech Stack, coding rules).
+- `data/`: Raw data synced from Figma (styles, components, file structure).
 
 ---
 
-## 👨‍💻 Tác giả
+## ⚡ Optimization for Large Projects
 
-Phát triển bởi **TranVanTienDat** 🚀
+- **Partial Sync**: Use Node ID (in the Figma link) to sync only the part you need to work on, saving time and resources.
+  - Example: `/sync-figma-data [Link]?node-id=5965:18603`
+- **Context Awareness**: Whenever building, the AI will automatically read the **entire** `figma-agent/` directory to ensure the generated code matches the existing design system 100%.
+
+---
+
+## 👨‍💻 Author
+
+Developed by **TranVanTienDat** 🚀

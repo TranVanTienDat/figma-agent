@@ -1,38 +1,38 @@
-# 📖 Hướng dẫn Cài đặt Chi tiết (Detailed Installation)
+# 📖 Detailed Installation Guide
 
-Tài liệu này hướng dẫn bạn cách thiết lập Figma Agent từ con số 0.
+This document guides you through setting up Figma Agent from scratch.
 
-## 1. Chuẩn bị
+## 1. Prerequisites
 
-- Đảm bảo bạn đã cài đặt **Node.js 18+**.
-- Cài đặt các gói Python cần thiết:
+- Ensure you have **Node.js 18+** installed.
+- Install the required Python packages:
   ```bash
   pip3 install requests python-dotenv
   ```
 
-## 2. Cài đặt Công cụ
+## 2. Tool Installation
 
-Di chuyển vào thư mục nguồn `build-tool` và chạy:
+Navigate to the `build-tool` source directory and run:
 
 ```bash
 npm install -g .
 ```
 
-Sau bước này, lệnh `figma-agent` sẽ khả dụng ở bất cứ đâu trong terminal của bạn.
+After this step, the `figma-agent` command will be available anywhere in your terminal.
 
-## 3. Sử dụng trong Dự án Mới
+## 3. Usage in New Projects
 
-Để tích hợp sức mạnh Figma vào một dự án web bất kỳ:
+To integrate Figma capabilities into any web project:
 
-1. **Initialize**: Chạy `figma-agent` tại thư mục gốc dự án đó.
-2. **Setup Token**: Tạo file `.env` và thêm `FIGMA_ACCESS_TOKEN`.
-3. **Config**: Chạy `/figma-config` trong chat để AI tự nhận diện dự án đang dùng công nghệ gì (Vite, Next.js, Tailwind, etc.).
+1. **Initialize**: Run `figma-agent` in the project's root directory.
+2. **Setup Token**: Create a `.env` file and add `FIGMA_ACCESS_TOKEN`.
+3. **Config**: Run `/figma-config` in the chat to let the AI automatically detect the technology stack (Vite, Next.js, Tailwind, etc.).
 
-## 4. Troubleshooting (Xử lý sự cố)
+## 4. Troubleshooting
 
-- **Lỗi 403**: Kiểm tra lại Token của bạn hoặc quyền truy cập file Figma.
-- **Lỗi 429 (Rate Limit)**: Đừng lo, tool sẽ tự động đợi và thử lại. Hãy kiên nhẫn.
-- **Lỗi không tìm thấy file .env**: Trên Mac, nếu file ẩn bị chặn, hãy đảm bảo bạn run lệnh từ trong VS Code hoặc cấp quyền "Full Disk Access" cho Terminal.
+- **403 Error**: Check your Token or Figma file access permissions.
+- **429 Error (Rate Limit)**: Don't worry, the tool will automatically wait and retry. Please be patient.
+- **.env file not found**: On Mac, if hidden files are blocked, ensure you run the command from within VS Code or grant "Full Disk Access" to the Terminal.
 
 ---
 

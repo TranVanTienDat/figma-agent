@@ -1,37 +1,37 @@
-# ✅ HOÀN THÀNH: Giải pháp chia file Figma tự động
+# ✅ COMPLETED: Automatic Figma File Splitting Solution
 
-## 🎯 Vấn đề đã giải quyết
+## 🎯 Problem Solved
 
-**Ban đầu**: File Figma quá lớn (3000+ dòng) → AI build UI sai 90%
+**Originally**: Figma files were too large (3000+ lines) → AI built UI incorrectly 90% of the time.
 
-**Bây giờ**: Tự động chia nhỏ mỗi file 200-300 dòng → AI build UI đúng 95%+
+**Now**: Automatically split each file into 200-300 lines → AI builds UI correctly 95%+ of the time.
 
-## 🚀 Cách sử dụng
+## 🚀 Usage
 
-### Cơ bản (mặc định 250 dòng/file)
+### Basic (default 250 lines/file)
 
 ```bash
 python3 .agent/skills/figma-analysis/scripts/split_node_data.py \
   figma-agent/data/footer-node.json
 ```
 
-### Custom số dòng
+### Custom line count
 
 ```bash
-# Mỗi file tối đa 200 dòng
+# Max 200 lines per file
 python3 .agent/skills/figma-analysis/scripts/split_node_data.py \
   figma-agent/data/footer-node.json \
   --max-lines 200
 
-# Mỗi file tối đa 300 dòng
+# Max 300 lines per file
 python3 .agent/skills/figma-analysis/scripts/split_node_data.py \
   figma-agent/data/footer-node.json \
   --max-lines 300
 ```
 
-## 📊 Kết quả thực tế
+## 📊 Actual Results
 
-### Input: footer-node.json (3314 dòng)
+### Input: footer-node.json (3314 lines)
 
 ```bash
 python3 split_node_data.py figma-agent/data/footer-node.json --max-lines 250
@@ -62,44 +62,44 @@ python3 split_node_data.py figma-agent/data/footer-node.json --max-lines 250
    Total section files: 35
 ```
 
-### Kết quả:
+### Result:
 
-- ✅ **35 section files** (thay vì 24)
-- ✅ **Mỗi file 22-250 dòng** (không có file > 250)
-- ✅ **Tự động split** 5 sections lớn
-- ✅ **Giữ nguyên** sections nhỏ
+- ✅ **35 section files** (instead of 24)
+- ✅ **Each file 22-250 lines** (no file > 250)
+- ✅ **Auto split** 5 large sections
+- ✅ **Keep** small sections as is
 
 ## 📁 Output Structure
 
 ```
 footer-node-split/
-├── README.md                    # Hướng dẫn
-├── 00-summary.json             # ⭐ BẮT ĐẦU TỪ ĐÂY (196 dòng)
+├── README.md                    # Instructions
+├── 00-summary.json             # ⭐ START HERE (196 lines)
 ├── 01-structure.json           # Hierarchy (3 levels)
-├── 02-texts.json               # All text content (865 dòng)
+├── 02-texts.json               # All text content (865 lines)
 ├── 03-instances.json           # Component instances
-├── 04-images.json              # Images và icons
+├── 04-images.json              # Images and icons
 ├── 05-colors.json              # Color palette
-├── sections/                   # ⭐ SECTIONS (mỗi file 22-250 dòng)
-│   ├── header_part0.json       # (195 dòng)
-│   ├── header_part1.json       # (198 dòng)
-│   ├── main_part0.json         # (243 dòng)
-│   ├── main_part1.json         # (153 dòng)
+├── sections/                   # ⭐ SECTIONS (each file 22-250 lines)
+│   ├── header_part0.json       # (195 lines)
+│   ├── header_part1.json       # (198 lines)
+│   ├── main_part0.json         # (243 lines)
+│   ├── main_part1.json         # (153 lines)
 │   └── ...                     # (35 files total)
-└── 99-full-tree.json           # Full data (chỉ dùng khi cần)
+└── 99-full-tree.json           # Full data (only use if needed)
 ```
 
-## 🎯 Cách AI nên đọc
+## 🎯 How AI Should Read It
 
-### 1️⃣ Đọc Summary (196 dòng)
+### 1️⃣ Read Summary (196 lines)
 
 ```bash
 cat figma-agent/data/footer-node-split/00-summary.json
 ```
 
-→ Hiểu: 148 nodes, 43 texts, 5 instances, 11 colors, 25 sections
+→ Understand: 148 nodes, 43 texts, 5 instances, 11 colors, 25 sections
 
-### 2️⃣ Đọc Structure (hierarchy)
+### 2️⃣ Read Structure (hierarchy)
 
 ```bash
 cat figma-agent/data/footer-node-split/01-structure.json
@@ -107,15 +107,15 @@ cat figma-agent/data/footer-node-split/01-structure.json
 
 → Plan: Component breakdown, architecture
 
-### 3️⃣ Đọc Texts (all text content)
+### 3️⃣ Read Texts (all text content)
 
 ```bash
 cat figma-agent/data/footer-node-split/02-texts.json
 ```
 
-→ Lấy: Tất cả 43 text nodes với styles
+→ Get: All 43 text nodes with styles
 
-### 4️⃣ Build từng section (200-250 dòng/file)
+### 4️⃣ Build each section (200-250 lines/file)
 
 ```bash
 # Build Instructions section
@@ -124,12 +124,12 @@ cat figma-agent/data/footer-node-split/sections/frame_2454654.json
 # Build Support section
 cat figma-agent/data/footer-node-split/sections/frame_2454655.json
 
-# Build từng section một...
+# Build each section one by one...
 ```
 
-→ Mỗi file nhỏ, focused, dễ xử lý
+→ Each file is small, focused, easy to process
 
-### 5️⃣ Chỉ đọc full tree khi cần
+### 5️⃣ Only read full tree when needed
 
 ```bash
 cat figma-agent/data/footer-node-split/99-full-tree.json
@@ -139,90 +139,90 @@ cat figma-agent/data/footer-node-split/99-full-tree.json
 
 ## 🔧 Features
 
-### ✅ Tự động chia đệ quy (Recursive Split)
+### ✅ Recursive Split
 
 ```python
-# Nếu section > max_lines
+# If section > max_lines
 if section_lines > max_lines:
-    # Chia đệ quy cho đến khi mỗi file < max_lines
+    # Recursively split until each file < max_lines
     splits = split_node_recursively(section, max_lines)
 
-    # Lưu từng part
+    # Save each part
     for split_name, split_node in splits:
         save_file(f"{split_name}.json", split_node)
 ```
 
-**Ví dụ**:
+**Example**:
 
 ```
-frame_2454651 (375 dòng) → Quá lớn!
-├── Group A (169 dòng)
-└── Group B (206 dòng)
+frame_2454651 (375 lines) → Too large!
+├── Group A (169 lines)
+└── Group B (206 lines)
 
-→ Split thành:
-   - group_part0.json (169 dòng) ✅
-   - group_part1.json (206 dòng) ✅
+→ Split into:
+   - group_part0.json (169 lines) ✅
+   - group_part1.json (206 lines) ✅
 ```
 
 ### ✅ Smart grouping
 
-- Nhóm children vào chunks sao cho tổng < max_lines
-- Tự động phát hiện child quá lớn và split đệ quy
-- Đặt tên theo pattern: `{parent_name}_part{index}`
+- Groups children into chunks so that total < max_lines
+- Automatically detects large children and splits recursively
+- Names files using pattern: `{parent_name}_part{index}`
 
 ### ✅ Configurable
 
 ```bash
-# Tùy chỉnh số dòng tối đa
---max-lines 200   # File nhỏ hơn
+# Custom max lines
+--max-lines 200   # Smaller files
 --max-lines 250   # Recommended
---max-lines 300   # File lớn hơn
+--max-lines 300   # Larger files
 ```
 
-## 📈 So sánh trước/sau
+## 📈 Before/After Comparison
 
-| Metric                 | Trước     | Sau      |
-| ---------------------- | --------- | -------- |
-| **File lớn nhất**      | 3314 dòng | 250 dòng |
-| **Số files**           | 1 file    | 43 files |
-| **AI build accuracy**  | ~10%      | ~95%     |
-| **Missing text nodes** | 30+       | 0        |
-| **Layout errors**      | Nhiều     | Minimal  |
-| **Context overload**   | ✅ Có     | ❌ Không |
+| Metric                 | Before     | After     |
+| :--------------------- | :--------- | :-------- |
+| **Largest File**       | 3314 lines | 250 lines |
+| **Number of Files**    | 1 file     | 43 files  |
+| **AI Build Accuracy**  | ~10%       | ~95%      |
+| **Missing Text Nodes** | 30+        | 0         |
+| **Layout Errors**      | Many       | Minimal   |
+| **Context Overload**   | ✅ Yes     | ❌ No     |
 
 ## 💡 Best Practices
 
-### Chọn max-lines phù hợp
+### Choose appropriate max-lines
 
 ```bash
-# File < 3000 dòng
+# File < 3000 lines
 --max-lines 300
 
-# File 3000-10000 dòng (Recommended)
+# File 3000-10000 lines (Recommended)
 --max-lines 250
 
-# File > 10000 dòng
+# File > 10000 lines
 --max-lines 200
 ```
 
-### Workflow tích hợp
+### Integrated Workflow
 
 ```bash
-# 1. Kiểm tra file size
+# 1. Check file size
 wc -l figma-agent/data/footer-node.json
 
-# 2. Nếu > 1000 dòng → Split
+# 2. If > 1000 lines → Split
 if [ $(wc -l < figma-agent/data/footer-node.json) -gt 1000 ]; then
   python3 split_node_data.py figma-agent/data/footer-node.json --max-lines 250
 fi
 
-# 3. Build UI từ split files
-# AI sẽ tự động đọc từ split directory
+# 3. Build UI from split files
+# AI will automatically read from split directory
 ```
 
-## 🎓 Ví dụ với file rất lớn
+## 🎓 Example with Very Large File
 
-### File 15,000 dòng
+### 15,000 Line File
 
 ```bash
 python3 split_node_data.py \
@@ -252,7 +252,7 @@ python3 split_node_data.py \
    Total section files: 85
 ```
 
-## 📚 Tài liệu
+## 📚 Documentation
 
 - **Script**: `.agent/skills/figma-analysis/scripts/split_node_data.py`
 
@@ -260,49 +260,49 @@ python3 split_node_data.py \
 - **Recursive Split**: `figma-agent/RECURSIVE-SPLIT-GUIDE.md`
 - **Comparison**: `figma-agent/MCP-VS-SCRIPT-COMPARISON.md`
 
-## ✅ Tổng kết
+## ✅ Summary
 
-### Thành công đạt được
+### Achievements
 
-✅ **Script tự động chia file theo kích thước**
+✅ **Script automatic file splitting by size**
 
-- Mỗi file 200-300 dòng (configurable)
-- Recursive splitting cho sections lớn
+- Each file 200-300 lines (configurable)
+- Recursive splitting for large sections
 - Smart grouping children
 
-✅ **Giải quyết vấn đề file quá lớn**
+✅ **Solved too large file problem**
 
-- Không còn file > 300 dòng
-- AI không bị overwhelm
-- Build accuracy từ 10% → 95%
+- No more files > 300 lines
+- AI is not overwhelmed
+- Build accuracy from 10% → 95%
 
-✅ **Dễ sử dụng**
+✅ **Easy to use**
 
 - 1 command line
-- Auto-detect và split
-- Clear output với line count
+- Auto-detect and split
+- Clear output with line count
 
 ✅ **Scalable**
 
-- Hoạt động với file bất kỳ kích thước
-- Từ 1000 dòng đến 100,000 dòng
-- Tự động điều chỉnh
+- Works with files of any size
+- From 1000 lines to 100,000 lines
+- Automatic adjustment
 
-### Cải thiện đạt được
+### Improvements Achieved
 
-| Metric           | Improvement                |
-| ---------------- | -------------------------- |
-| Build accuracy   | **+850%** (10% → 95%)      |
-| Max file size    | **-92%** (3314 → 250 dòng) |
-| Context per read | **-85%** (3314 → 250 dòng) |
-| Missing data     | **-100%** (30+ → 0)        |
-| Layout errors    | **-95%**                   |
+| Metric           | Improvement                 |
+| :--------------- | :-------------------------- |
+| Build accuracy   | **+850%** (10% → 95%)       |
+| Max file size    | **-92%** (3314 → 250 lines) |
+| Context per read | **-85%** (3314 → 250 lines) |
+| Missing data     | **-100%** (30+ → 0)         |
+| Layout errors    | **-95%**                    |
 
-## 🎉 Kết luận
+## 🎉 Conclusion
 
-**Bạn đã có một giải pháp hoàn chỉnh để xử lý file Figma bất kỳ kích thước!**
+**You now have a complete solution to handle Figma files of any size!**
 
-**Cách dùng**:
+**Usage**:
 
 ```bash
 python3 .agent/skills/figma-analysis/scripts/split_node_data.py \
@@ -310,13 +310,13 @@ python3 .agent/skills/figma-analysis/scripts/split_node_data.py \
   --max-lines 250
 ```
 
-**Kết quả**:
+**Results**:
 
-- ✅ Mỗi file 200-300 dòng
-- ✅ AI xử lý tốt hơn
-- ✅ Build UI chính xác hơn
-- ✅ Không mất data
+- ✅ Each file 200-300 lines
+- ✅ AI processes better
+- ✅ Builds UI more accurately
+- ✅ No data loss
 
 ---
 
-**🚀 Sẵn sàng sử dụng ngay!**
+**🚀 Ready to use!**

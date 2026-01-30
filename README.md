@@ -13,10 +13,10 @@ Figma Agent là bộ công cụ mạnh mẽ dành cho Antigravity AI, giúp chuy
 
 ### 2. Cài đặt Global
 
-Tại thư mục gốc của dự án công cụ này, chạy:
+Chạy lệnh sau:
 
 ```bash
-npm install -g .
+npm install -g @ckim03/figma-agent
 ```
 
 ### 3. Cấu hình môi trường

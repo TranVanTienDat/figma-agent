@@ -81,3 +81,28 @@ for file in figma-agent/data/*node.json; do
     fi
 done
 ```
+
+## 📁 Output Structure (Split Data)
+
+When data is split, a new directory `<file>-split/` is created:
+
+```
+<your-file>-split/
+├── README.md                    # Human-readable guide
+├── 00-summary.json             # 📊 START HERE - Statistics & overview
+├── 01-structure.json           # 🌳 Hierarchy (3 levels deep)
+├── 02-texts.json               # 📝 All text content
+├── 03-instances.json           # 🧩 Component instances
+├── 04-images.json              # 🖼️  Images and icons
+├── 05-colors.json              # 🎨 Color palette
+├── sections/                   # 📂 Individual sections (200-300 lines each)
+└── 99-full-tree.json           # 🔍 Complete data (use only if needed)
+```
+
+## 🤖 AI Processing Order for Split Data
+
+1. **Read `00-summary.json`** first to get an overview.
+2. **Read `01-structure.json`** to understand the hierarchy.
+3. **Read `02-texts.json`** for all text content.
+4. **Read specific `sections/*.json`** when building individual components.
+5. **Only read `99-full-tree.json`** as a last resort.

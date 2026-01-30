@@ -255,7 +255,7 @@ python3 split_node_data.py \
 ## 📚 Tài liệu
 
 - **Script**: `.agent/skills/figma-analysis/scripts/split_node_data.py`
-- **Workflow**: `.agent/workflows/figma-split-data.md`
+
 - **Guide**: `figma-agent/SPLIT-DATA-GUIDE.md`
 - **Recursive Split**: `figma-agent/RECURSIVE-SPLIT-GUIDE.md`
 - **Comparison**: `figma-agent/MCP-VS-SCRIPT-COMPARISON.md`

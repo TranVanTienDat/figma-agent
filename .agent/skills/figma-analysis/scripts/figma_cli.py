@@ -162,7 +162,7 @@ def main():
             print(f"📡 Fetching published styles for: {args.file_key}...")
             data = client.get_published_styles(args.file_key)
 
-        if args.command == "local-variables":
+        elif args.command == "local-variables":
             print(f"📡 Fetching local variables for: {args.file_key}...")
             data = client.get_local_variables(args.file_key)
             if not data:

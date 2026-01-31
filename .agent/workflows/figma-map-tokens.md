@@ -8,9 +8,13 @@ This workflow takes the raw style data from Step 1 (`figma-agent/data/styles.jso
 
 - You must have run `/sync-figma-data` first to generate `figma-agent/data/styles.json`.
 
-# Steps
+1. **Visual Context Check (Mandatory)**:
+   - Identify the **Root Frame** ID or the largest background **Rectangle** ID (the layer that serves as the backdrop).
+   - Use `grep` or `cat` on the data files to find the `fills` of this specific Node ID.
+   - **MANDATORY**: Map the hex code of this dominant background layer to the `--color-background` token.
+   - **DO NOT** rely on color frequency/usage count (e.g., white text on a black background may have more nodes, but black is the visual background).
 
-1. Create a Token Transformer Script.
+2. Create a Token Transformer Script.
    _This script reads the raw Figma JSON and outputs a cleaner Tailwind-ready format._
    // turbo
 

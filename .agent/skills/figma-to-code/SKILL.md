@@ -15,12 +15,11 @@ metadata:
 
 ## 🏗️ Core (Core System)
 
-1.  **MANDATORY: Extensive Context Reading**: Before starting ANY code generation, the agent MUST read `figma-agent/config.yaml` and the content of the split data directories in `figma-agent/*` (starting with `00-summary.json`). Valid data is now split into multiple focused files (summary, structure, texts, etc.) for better accuracy.
-2.  **Core Architecture Compliance**: All design data and configurations are centralized in the `figma-agent/` directory.
-3.  **Token System**: Build the variable system by reading `05-colors.json` (for color palette) and `02-texts.json` (for typography styles) located in the split data directory. Do NOT look for a single `tokens.json`.
-4.  **Component Reuse**: Check `03-instances.json` in the split directory to identify component instances. If a node matches a known design system component, use the shared component instead of rebuilding it.
-5.  **Compliance**: Strictly adhere to the Framework, Language, and Styling system specified in `figma-agent/config.yaml`.
-6.  **No Assumptions**: Never hard-code technologies. If a configuration is missing in `config.yaml`, ask the user for clarification.
+1.  **MANDATORY: Extensive Context Reading**: Before starting ANY code generation, the agent MUST read `figma-agent/project.md` and the content of the split data directories.
+2.  **Zero-Guessing Policy**: If a property like `layoutPositioning: "ABSOLUTE"` is found, the agent **MUST** calculate its position relative to the main container and apply `fixed` or `absolute` positioning.
+3.  **Global Search Integration**: If a UI element is visible in the design (e.g., Star Ratings, floating "Prev/Next" buttons) but missing in the primary section JSON, the agent **MUST** grep the entire `figma-agent/data/` directory for that element's label to find its actual data.
+4.  **Token System**: Build the variable system by reading `05-colors.json` and `02-texts.json`. Any hex code found in `data.json` should be matched against `05-colors.json` to see if a variable exists.
+5.  **Compliance**: Strictly adhere to the tech stack in `project.md`. Handle special cases like `text-decoration: line-through` for prices.
 
 ## 📋 Requirements (Technical Standards)
 
@@ -48,8 +47,27 @@ metadata:
 
 ### Phase 2: Foundation & Shell
 
-- **CSS Design System**: Setup `globals.css` or equivalent with CSS Variables based on tokens.
-- **App Shell Implementation**: Build the high-level layout structure (Sidebar, Navigation, Information Zones) with pixel-perfect precision.
+- **Step 1: Read Project Context (MANDATORY)**:
+  - Read `figma-agent/project.md` → Section **"2. Tech Stack"** → Field **"Styling"**.
+  - Identify the styling system: `CSS`, `Tailwind`, `MUI`, `Joy UI`, `Styled Components`, `Emotion`, etc.
+- **Step 2: Setup Design Tokens (Based on Detected System)**:
+  - **If Styling = "CSS" or "CSS Modules"**:
+    - Create `src/styles/globals.css` or `src/styles/tokens.css`.
+    - Map colors from `05-colors.json` to CSS Variables (e.g., `--color-primary: #d82255;`).
+    - Map typography from `02-texts.json` to CSS Variables (e.g., `--font-heading: 'Manrope', sans-serif;`).
+  - **If Styling = "Tailwind"**:
+    - Extend `tailwind.config.js` → `theme.extend.colors` with tokens from `05-colors.json`.
+    - Add custom fonts to `theme.extend.fontFamily` from `02-texts.json`.
+    - Add spacing/shadows if needed.
+  - **If Styling = "MUI" or "Joy UI"**:
+    - Create `src/theme.ts` or `src/styles/theme.ts`.
+    - Map Figma tokens to MUI/Joy theme structure: `palette.primary.main`, `typography.h1.fontFamily`, etc.
+  - **If Styling = "Styled Components" or "Emotion"**:
+    - Create `src/styles/theme.ts` with a theme object.
+    - Wrap the app with `<ThemeProvider theme={theme}>`.
+
+- **Step 3: App Shell Implementation**:
+  - Build the high-level layout structure (Sidebar, Navigation, Information Zones) with pixel-perfect precision using the detected styling system.
 
 ### Phase 3: Atomic Component Build
 
@@ -64,8 +82,9 @@ metadata:
 
 ### Phase 5: Interaction & Refinement
 
-- **Micro-interactions**: Implement animations for sidebar toggles, dropdowns, and notifications.
-- **Visual Audit**: Perform a screenshot comparison between the code and Figma to ensure 100% fidelity.
+- **Absolute Element Alignment**: Audit all elements that were marked as "ABSOLUTE" in Figma. Ensure they are correctly placed using `left`, `right`, `top`, or `bottom` with proper z-index.
+- **Fidelity Audit**: Check for missing "Micro-details" (e.g., star ratings, small links like "Watch videos", pink link colors, price strike-throughs).
+- **Visual Audit**: Perform a screenshot comparison. If deviation is > 4% (missing buttons, wrong prices, wrong positioning), the build is considered a FAILURE and must be refined.
 
 ## 📚 Implementation Examples
 

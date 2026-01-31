@@ -13,74 +13,20 @@ metadata:
 
 > Transforms Figma design data into actionable technical requirements. For deep technical rules, see [Technical Reference](references/REFERENCE.md).
 
-## 🎯 What This Skill Does
+## 🔍 Split Data Strategic Handling (New ⭐)
 
-You are a Senior UI Engineer and System Analyst. When a user provides Figma data or screenshots, extract and document everything developers need to implement the design at a **Pixel-Perfect** level.
+When working with split data, you must follow these rules to ensure < 1% deviation:
 
-## 🛡️ AI Guardrails (Permanent)
-
-1.  **Figma-Only Access**: When performing design analysis or extraction, you are **ONLY** permitted to access Figma URLs. Do not open or follow external links, advertisements, or third-party documentation unless explicitly verified as part of the Figma domain.
-2.  **Exhaustive Deep Dive Mode**: All Figma extractions must follow the "Recursive X-Ray Scan" protocol:
-    - Reach the "leaves" of the tree (Text, Vector, Boolean).
-    - Zero guessing is tolerated. If data is missing (e.g., fontSize), stop and report.
-    - Mismatch between data and screenshot requires a subtree re-scan.
-
-## 🔍 Metadata Query Utilities (Efficient Data Access)
-
-When working with large Figma files, avoid loading the entire `file-metadata.json` (which can be thousands of lines). Instead, use the query tool:
-
-**Available Query Commands:**
-
-1. **Get Summary** (High-level overview):
-
-   ```bash
-   python3 .agent/skills/figma-analysis/scripts/query_metadata.py summary
-   ```
-
-   Returns: File name, folder, version, component/style counts (~10 lines).
-
-2. **Search Components**:
-
-   ```bash
-   python3 .agent/skills/figma-analysis/scripts/query_metadata.py components --search "button"
-   ```
-
-   Returns: Only components matching the search term.
-
-3. **Filter Styles by Type**:
-
-   ```bash
-   python3 .agent/skills/figma-analysis/scripts/query_metadata.py styles --type TEXT
-   ```
-
-   Returns: Only TEXT styles (or FILL, EFFECT, GRID).
-
-4. **Get Component Details**:
-
-   ```bash
-   python3 .agent/skills/figma-analysis/scripts/query_metadata.py component "Primary Button"
-   ```
-
-   Returns: Full details for a specific component.
-
-5. **Get Style Details** (with optional API fetch):
-
-   ```bash
-   # Basic info from metadata
-   python3 .agent/skills/figma-analysis/scripts/query_metadata.py style "Heading 1"
-
-   # Full details from Figma API (includes actual CSS properties)
-   python3 .agent/skills/figma-analysis/scripts/query_metadata.py style "Heading 1" --fetch-api
-   ```
-
-   Returns: Style metadata, optionally with full CSS properties from API.
-
-**When to Use:**
-
-- Use `summary` at the start of analysis to understand project scale.
-- Use `components --search` when user asks about specific UI elements.
-- Use `styles --type TEXT` when extracting typography information.
-- **Never** read the full `file-metadata.json` directly unless absolutely necessary.
+1.  **Node-ID Discovery**: Do not rely on filenames. Use `grep -r "NODE_ID"` to find which file fragment contains the data for a specific section.
+2.  **Global Content Reconnaissance**:
+    - **MANDATORY**: Locate the "Content Source of Truth" (the file containing the bulk of text overrides).
+    - **Keyword Search**: search for strings visible in screenshots (e.g., "$1391", "Trending") in all `.json` files to find buried nodes.
+3.  **Cross-Reference Mapping**: Resolve Style and Component IDs by scanning the entire `data/` directory, as they may be defined in any file fragment.
+4.  **Visual Dominance Audit (Anti-Usage Count Bias)**:
+    - **NEVER** assume the most frequent color is the background.
+    - **MANDATORY**: Specifically identify the `fills` of the **Root Frame** or the largest **Rectangle** occupying > 80% of the screen area.
+    - If a color has high usage count (e.g., White) but small area (e.g., Text), it is a **Foreground Token**.
+    - If a color has low usage count (e.g., Dark Gray) but covers the entire background, it is the **Background Token**.
 
 ## 📋 Analysis Process (Senior Architect Level)
 
@@ -231,18 +177,14 @@ Extracted data will be saved to `figma-agent/` according to the following diagra
 
 ```
 figma-agent/
-├── config.yaml                     # Tech Stack & Custom Rules
+├── project.md                      # Tech Stack & Custom Rules
 ├── data/                           # Raw Figma sync data
 │   ├── file-structure.json
 │   ├── styles.json
 │   └── components.json
+│   └── *.json
+|   |__ *.json
 ├── common/                         # Shared Design System
-│   ├── colors/
-│   └── variants/
-└── [section-name]/                 # UI Section/Page information
-    ├── data.json                   # Layout metadata & node tree structure
-    ├── specs.md                    # Technical documentation & display logic
-    └── components/                 # Child components
 ```
 
 ## 📝 data.json Schema
@@ -349,22 +291,23 @@ When dealing with complex Figma files (e.g., SaaS Dashboards with thousands of n
 3.  **Rate Limit Awareness**: The tool handles 429 errors automatically using `Retry-After`. Stay patient if you see "Rate Limited" logs.
 4.  **Data Partitioning**: Split large pages into smaller logical "Sections" or "Components" to reduce JSON payload size and AI context usage.
 
-## 🔍 Analysis Workflow (Exhaustive Deep Dive Mode)
+## 🔍 Analysis Workflow (Exhaustive Deep Dive Mode - ELITE)
 
-1.  **Phase 1: Recursive X-Ray Scan**
-    - **Deep Traversal**: Use `mcp_figma_desktop_get_metadata` (or equivalent). Reach the "leaves" of the tree (Text, Vector, Boolean).
-    - **Filter Noise**: Immediately discard any node where `hidden == true`. Only process Visible Nodes.
+1.  **Phase 1: Recursive Part Assembly**
+    - **Deep Traversal**: If data is split, assemble the full tree in memory by reading all `partX.json` files for the target node.
+    - **Absolute Positioning Detection**: Specifically look for `layoutPositioning: "ABSOLUTE"`. These MUST be mapped to fixed/absolute CSS.
+    - **Z-Index & Overlap**: Identify layer order. Items that overlap others based on bounding boxes are likely floating elements (e.g., Fixed Nav buttons).
 
-2.  **Phase 2: Data Point Requirements**
-    - **Text Nodes**: Extract actual string (overrides), `fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, and `fills`.
-    - **Instance Nodes**: Identify `mainComponentId` and all `componentProperties` (variants like State, Size, Type).
-    - **Layout**: Extract full Auto-Layout specs (`itemSpacing`, `padding`, `layoutMode`, `primaryAxisSizingMode`).
+2.  **Phase 2: Data Point Requirements (Zero-Loss)**
+    - **Text Nodes**: Extract actual string, inclusive of pink-colored links, currency values, and ratings.
+    - **Instance Logic**: Identify `mainComponentId` and all variants.
+    - **Vector Detail**: Detect "STAR" icons or complex vectors and ensure they are flagged for export.
 
-3.  **Phase 3: Visual Verification & Override Resolution**
-    - **Override Priority**: Retrieve the actual text displayed on the screen. If an Instance has a text override, ignore the default component value.
-    - **Screenshot Cross-Check**: Invoke `get_screenshot`. Compare the text/icons in the image against extracted JSON.
-    - **Deferral Policy**: During `/figma-review`, this step may be deferred to the `/figma-build` phase to keep the bulk extraction process lean. However, if extraction accuracy is in doubt, it must be performed immediately.
-    - **Mismatch Resolution**: If the screenshot differs from data, re-scan the subtree. Do not proceed until they match.
+3.  **Phase 3: Visual Verification & Logic Audit**
+    - **Ghost Element Check**: Compare your list of components against the screenshot.
+    - **Background Verification**: Verify the primary Background Color by checking the Root Frame `fills`.
+    - **Key Data Audit**: If the screenshot shows a price (e.g., "$1391"), search all text-containing JSON files for this value.
+    - **Deviation Limit**: Your goal is < 4% deviation. If a major UI block is missing or the background color is incorrect, the analysis is incomplete.
 
 4.  **Phase 4: Output Structure (JSON)**
     - Return a single, consolidated JSON object following the Figma hierarchy with full style and text overrides.
@@ -426,42 +369,36 @@ Detect and document:
 
 ### Directory Mapping Example (Dashboard Project)
 
-```
 figma-agent/
 ├── data/
-│   ├── styles.json
-│   └── components.json
+│ ├── styles.json
+│ └── components.json
+│ └── \*.json
 ├── common/
-│   └── components/Button.json
-└── sidebar/                         # [section-name]
-    ├── data.json                   # Layout & Layer metadata for Sidebar
-    ├── specs.md                    # Interaction logic & variants
-    └── components/
-        └── NavItem.tsx             # Generated specific child component
-```
 
 ### data.json (Section UI) Example
 
-```json
 {
-  "sectionName": "sidebar-nav",
-  "pageContext": "dashboard",
-  "nodeId": "123:456",
-  "layout": {
-    "direction": "vertical",
-    "gap": 12,
-    "padding": { "left": 16, "right": 16 }
-  },
-  "children": [
-    {
-      "type": "INSTANCE",
-      "name": "Home-Link",
-      "overrides": { "text": "Dashboard", "active": true }
-    }
-  ]
+"sectionName": "sidebar-nav",
+"pageContext": "dashboard",
+"nodeId": "123:456",
+"layout": {
+"direction": "vertical",
+"gap": 12,
+"padding": { "left": 16, "right": 16 }
+},
+"children": [
+{
+"type": "INSTANCE",
+"name": "Home-Link",
+"overrides": { "text": "Dashboard", "active": true }
 }
+]
+}
+
 ```
 
 ---
 
 **Remember**: Your goal is to make the developer's job as easy as possible. Every piece of information you extract should be immediately usable in code.
+```

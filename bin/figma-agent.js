@@ -65,20 +65,20 @@ function initFigmaAgentStructure(destDir) {
     }
   });
 
-  // 3. Create config.yaml
-  const srcConfigPath = path.join(packageDir, "figma-agent", "config.yaml");
-  const destConfigPath = path.join(figmaAgentDir, "config.yaml");
+  // 3. Create project.md
+  const srcConfigPath = path.join(packageDir, "figma-agent", "project.md");
+  const destConfigPath = path.join(figmaAgentDir, "project.md");
 
   if (fs.existsSync(srcConfigPath)) {
     if (!fs.existsSync(destConfigPath)) {
       fs.copyFileSync(srcConfigPath, destConfigPath);
-      console.log("✅ Created: figma-agent/config.yaml");
+      console.log("✅ Created: figma-agent/project.md");
     } else {
-      console.log("⏭️  Exists: figma-agent/config.yaml");
+      console.log("⏭️  Exists: figma-agent/project.md");
     }
   } else {
     // Fallback if source file is missing (should not happen in correct build)
-    console.warn("⚠️  Warning: Template config.yaml not found in package.");
+    console.warn("⚠️  Warning: Template project.md not found in package.");
   }
 }
 

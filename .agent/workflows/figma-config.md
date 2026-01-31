@@ -1,10 +1,10 @@
 ---
-description: Auto-configure figma-agent/config.yaml by analyzing the project
+description: Auto-configure figma-agent/project.md by analyzing the project
 ---
 
 # Figma Agent Configuration Workflow
 
-This workflow analyzes your project structure and dependencies to automatically populate the `figma-agent/config.yaml` file with the correct context.
+This workflow analyzes your project structure and dependencies to automatically populate the `figma-agent/project.md` file with the correct context.
 
 ## 1. Analyze Project Structure
 
@@ -15,39 +15,32 @@ This workflow analyzes your project structure and dependencies to automatically 
 - Read `README.md` (if available) to understand the project's purpose and domain.
 - Check for existing configuration files (e.g., `tailwind.config.js`, `tsconfig.json`) to confirm specific conventions.
 
-## 2. Generate Context
+## 2. Update Configuration
 
-Based on the analysis, construct a context string.
+1. Read the existing `figma-agent/project.md`.
+2. Based on the analysis, update the corresponding sections in `project.md`:
+   - **Section 1. Project Overview**: Fill in Name, Description (from package.json/README) and infer Domain.
+   - **Section 2. Tech Stack**: Fill in Framework, Language, Styling, etc.
+   - **Section 3. Coding Conventions & Rules**: Suggest default best-practice rules based on the project type (e.g., "Use functional components", "Mobile-first").
 
-**Example Context Structure:**
+**Example Update:**
 
-```yaml
-context: |
-  Project: [Project Name from package.json]
-  Summary: [Brief description]
-  Tech Stack:
-    - Framework: [Detected Framework]
-    - Language: [TypeScript/JavaScript]
-    - Styling: [Detected Styling Solution]
-  Conventions:
-    - [e.g. Use functional components]
-    - [e.g. Mobile-first responsive design]
+```markdown
+## 2. Tech Stack
+
+- **Framework**: Next.js 14
+- **Language**: TypeScript
+- **Styling**: TailwindCSS
 ```
 
-## 3. Update Configuration
-
-1. Read the existing `figma-agent/config.yaml`.
-2. Replace the commented-out `context` section with the generated context.
-3. Suggest default best-practice rules for the `rules` section based on the project type (e.g., strict component structures for React).
-
-## 4. Update .gitignore
+## 3. Update .gitignore
 
 - Check if `.gitignore` exists in the root directory.
 - If it exists, check if `figma-agent` is already ignored.
 - If not ignored, append `figma-agent` to `.gitignore`.
 - If `.gitignore` does not exist, skip this step.
 
-## 5. User Verification
+## 4. User Verification
 
-- Show the proposed configuration to the user.
-- Ask if they want to add any specific domain knowledge or custom rules.
+- Show the updated content of `figma-agent/project.md` to the user.
+- Ask if they want to add any specific domain knowledge or custom rules to the file.

@@ -8,7 +8,7 @@ This workflow converts your synced Figma design data into production-ready React
 
 ## Prerequisites
 
-- The `figma-agent/config.yaml` must contain the correct project context (Tech Stack, Styling, etc.).
+- The `figma-agent/project.md` must contain the correct project context (Tech Stack, Styling, etc.).
 - The `figma-agent/data/` directory must contain the synced design data.
 - The `split_node_data.py` script must be available in `.agent/skills/figma-analysis/scripts/`.
 
@@ -19,6 +19,7 @@ This workflow converts your synced Figma design data into production-ready React
 - **Large File Detection**: Automatically check if JSON files exceed 1000 lines.
 - **Recursive Splitting**: Use `split_node_data.py` to break large files into manageable chunks (200-300 lines).
 - **Context Prioritization**: Always prioritize reading split files (`summary.json`, `sections/*.json`) over raw monolithic files.
+- **Code Conversion Principles**: Must follow strict rules for scanning, dynamic ID linking, and recursive priority as defined in the `code-conversion-principles` skill.
 
 ### 2. Design Analysis Standards
 
@@ -45,40 +46,50 @@ The agent will perform the following steps:
   ```
 - [ ] **Verify Output**: Confirm generation of `summary.json`, `structure.json`, and `sections/`.
 
-### Phase 2: Analysis & Building (Strict Order)
+### Phase 2: Analysis & Building (Senior Fragmented Data Strategy)
 
-- [ ] **Step 1: Read Summary** (`00-summary.json`)
-  - Understand total size, sections, and complexity.
-- [ ] **Step 2: Read Structure** (`01-structure.json`)
-  - Create the skeleton component (index.tsx) and plan sub-components (Header, FooterList, etc.).
-- [ ] **Step 3: Build Sections** (Iterate `sections/*.json`)
-  - **CRITICAL**: Read one section file at a time.
-  - Build the corresponding sub-component with pixel-perfect precision.
-- [ ] **Step 4: Inject Content** (`02-texts.json`)
-  - Populate text content from the extracted list.
-- [ ] **Step 5: Apply Styles** (`05-colors.json`)
-  - Configure Tailwind/CSS variables based on collected colors.
+- [ ] **Step 1: Read `00-summary.json` (The Map)**
+  - Quickly understand node distribution (Text, Frames, Instances).
+  - Identify root frame layout and top-level sections.
+  - **MANDATORY**: Verify **Background Color** via root fills (Visual Dominance Rule).
+- [ ] **Step 2: Read `01-structure.json` (The Skeleton)**
+  - Map the 3-level hierarchy and plan the component tree.
+  - Detect layout patterns (Flex/Grid) and spacing.
+- [ ] **Step 3: Read `02-texts.json` (Source of Truth for Copy)**
+  - Extract all 40+ text nodes and their styles (Manrope,Inter, etc.).
+  - Identify critical labels (Prices, Ratings, Labels) for visual audit.
+- [ ] **Step 4: Read `03-instances.json` (Component Discovery)**
+  - Scan for component IDs and variants.
+  - Link instances to their master logic (Buttons, Icons, Badges).
+- [ ] **Step 5: Read `04-images.json` & `05-colors.json` (Design Tokens)**
+  - Extract image metadata and resolve the full Color Palette.
+  - Map hex codes to semantic design tokens (Primary, Neutral).
+- [ ] **Step 6: Build Sections (Incremental Build)**
+  - Read `sections/*.json` one by one (200-250 lines each).
+  - Process fragments sequentially to maintain accuracy < 1% deviation.
+- [ ] **Step 7: Reference `99-full-tree.json` (Debug Mode)**
+  - Only use for cross-referencing buried data or complex recursive overrides.
 
-### Phase 3: Implementation
+### Phase 3: Implementation & Validation
 
 - [ ] **Code Generation**: Write JSX/TSX incrementally section by section.
-- [ ] **Review**: Audit generated code against design specs.
+- [ ] **Pixel-Perfect Validation Audit**:
+  - Compare generated layout against the "Real UI" image.
+  - Verify presence of: Star ratings, precise prices, license list items, and floating nav buttons.
+  - If deviation > 4%, perform a "Sub-node Re-scan" and fix the code.
 
 ## 📚 Implementation Guide
 
-### Handling Large Data (The "Split Strategy")
+### Handling Large Data (The "Disovery-First Strategy")
 
-**⛔ DO NOT** read `99-full-tree.json` (unless absolutely necessary for debugging).
+**✅ Mandatory Workflow Order:**
 
-**✅ Recommended Reading Order:**
-
-1.  **Overview**: `cat 00-summary.json` → "I am building a Footer with 5 columns."
-2.  **Skeleton**: `cat 01-structure.json` → "I need a grid layout with these wrapper divs."
-3.  **Detailing**:
-    - `cat sections/frame_1.json` → "Building Column 1..."
-    - `cat sections/frame_2.json` → "Building Column 2..."
-4.  **Content**: `cat 02-texts.json` → "Filling text..."
-5.  **Polishing**: `cat 05-colors.json` → "Fixing colors..."
+1.  **Index**: Run `grep -r "type" figma-agent/data/` to classify files.
+2.  **Locate Root**: Find the file containing the top-level Frame ID.
+3.  **Keyword Safety Net**:
+    - `grep -r "$1391" figma-agent/data/`
+    - `grep -r "Rating" figma-agent/data/`
+    - This bypasses random filenames and finds the exact data fragment needed.
 
 ### Example: Mapping Tokens
 
@@ -89,18 +100,97 @@ const styles = {
 };
 ```
 
-## ✅ Completion
+## ✅ Completion & UI Validation
 
 When finished, the agent **MUST**:
 
 1.  **Mark the checklist** completed.
-2.  **Provide a summary** of components created.
+2.  **Provide a summary** of components created and file structure.
 3.  **Confirm** that split data was used for better accuracy.
+
+### 🎨 UI Verification Checklist (CRITICAL)
+
+Before declaring completion, perform the following validation:
+
+- [ ] **Visual Comparison**: Compare the generated UI against the original Figma design
+  - Check layout structure (spacing, alignment, hierarchy)
+  - Verify all components are present (buttons, inputs, cards, etc.)
+  - Confirm text content matches exactly (no missing or incorrect labels)
+- [ ] **Design Accuracy Audit**:
+  - [ ] Colors match the design tokens (no color deviations)
+  - [ ] Typography matches (font sizes, weights, line heights)
+  - [ ] Spacing matches specifications (padding, margins, gaps)
+  - [ ] Component states visible (hover, active, disabled states if applicable)
+- [ ] **Content Completeness**:
+  - [ ] All text nodes from `02-texts.json` are rendered
+  - [ ] All images from `04-images.json` are displayed
+  - [ ] All component instances are correctly linked
+  - [ ] No placeholder content remains (e.g., "Lorem Ipsum", "[COMPONENT]")
+- [ ] **Responsive Behavior** (if applicable):
+  - [ ] Layout adapts correctly on different screen sizes
+  - [ ] Mobile/tablet variations match design specifications
+  - [ ] Navigation collapses/expands as designed
+- [ ] **Accessibility & Code Quality**:
+  - [ ] Semantic HTML structure is correct (h1-h4 hierarchy)
+  - [ ] ARIA labels present where needed
+  - [ ] No hard-coded values (all values from tokens)
+  - [ ] TypeScript types properly defined
+
+### Quality Criteria
+
+**Acceptable Deviation**: ≤ 4% visual deviation
+
+- **0-2%**: Minor spacing/sizing differences → Acceptable ✅
+- **2-4%**: Small color tone differences, minor layout shifts → Acceptable with notes ⚠️
+- **> 4%**: Missing components, wrong colors, incorrect text → FAILURE ❌ (Must be refactored)
+
+If deviation > 4%, you **MUST**:
+
+- Identify the problematic elements
+- Re-scan the Figma data using grep for missing components
+- Update the code to match the design precisely
+- Re-validate until deviation ≤ 4%
+
+### Final Validation Report
+
+Provide a detailed report including:
+
+```markdown
+## Build Completion Report
+
+**Status**: ✅ COMPLETE / ❌ NEEDS REVISION
+
+### Components Built
+
+- [x] Component Name (Lines: 50-100, File: components/ComponentName.tsx)
+- [x] Component Name (Lines: 101-150, File: components/ComponentName.tsx)
+
+### Design Accuracy
+
+- Visual Deviation: 2.1% ✅
+- Missing Elements: None
+- Color Accuracy: 100% ✅
+- Typography Match: 100% ✅
+
+### Files Generated
+
+- src/components/...
+- src/styles/...
+- src/types/...
+
+### Notes
+
+- All colors mapped from 05-colors.json
+- Typography extracted from 02-texts.json
+- Layout generated from split sections
+- No hard-coded values used
+```
 
 ## 🚀 Usage
 
 **Example commands:**
 
-- "Build giúp tao cái Footer này. Nhớ check size và split trước."
-- "Dựng UI Landing Page. Đọc file summary -> structure -> sections để code chi tiết."
-- "Code component Button. Lấy text từ file texts.json."
+- "Build the Footer component. Check file size first and split if needed."
+- "Generate the Landing Page UI. Read summary → structure → sections for detailed implementation."
+- "Create a Button component. Extract text from texts.json file."
+- "Build the Header and verify it matches the Figma design pixel-perfectly."

@@ -100,64 +100,6 @@ python3 .agent/skills/figma-analysis/scripts/split_node_data.py figma-agent/data
 
 This creates `node-tree-split/` with organized sections.
 
-## 🤖 AI Processing Order for Split Data (CRITICAL)
-
-**After sync completes, follow this exact order:**
-
-### Step 1: Discover All Files
-
-```bash
-find figma-agent/data -type f -name "*.json" | sort
-find figma-agent/data -type f -name "*.json" | wc -l
-```
-
-- [ ] List all JSON files
-- [ ] Confirm split directories exist
-- [ ] Verify sections/ populated
-
-### Step 2: Read `00-summary.json` ⭐⭐⭐
-
-- [ ] Extract statistics
-- [ ] List all colors
-- [ ] Identify sections
-- [ ] Understand distribution
-
-### Step 3: Read `01-structure.json` ⭐⭐
-
-- [ ] Map hierarchy
-- [ ] Identify root frames
-- [ ] Plan component tree
-
-### Step 4: Read `02-texts.json` ⭐⭐
-
-- [ ] Extract all text
-- [ ] Map to components
-- [ ] Verify completeness
-
-### Step 5: Read `03-instances.json` ⭐⭐
-
-- [ ] List all instances
-- [ ] Map to masters
-- [ ] Count usage
-
-### Step 6: Read `04-images.json` & `05-colors.json` ⭐⭐⭐
-
-- [ ] List all images
-- [ ] Extract color palette
-- [ ] Create tokens
-
-### Step 7: Read All `sections/*.json` ⭐⭐⭐⭐
-
-- [ ] Read every section
-- [ ] Extract properties
-- [ ] Validate completeness
-
-### Step 8: Read `99-full-tree.json` (If Needed)
-
-- [ ] Only if sections insufficient
-- [ ] Use as backup
-- [ ] Validate against sections
-
 ---
 
 ## ✅ Post-Sync Validation
@@ -170,19 +112,6 @@ After sync completes, verify the following:
 - [ ] At least one `*node.json` file exists
 - [ ] Optional files created (components.json, styles.json, tokens.json)
 - [ ] Split directories created (`*-split/` folders with sections/)
-
-### Data Quality Checks
-
-```bash
-# Verify JSON files
-find figma-agent/data -type f -name "*.json" | wc -l
-
-# Check total lines
-find figma-agent/data -type f -name "*.json" -exec wc -l {} + | tail -1
-
-# Validate JSON syntax
-find figma-agent/data -type f -name "*.json" -exec python3 -m json.tool {} + > /dev/null 2>&1 && echo "✅ All JSON valid" || echo "❌ Invalid JSON found"
-```
 
 ### Validation Checklist
 
@@ -202,10 +131,3 @@ find figma-agent/data -type f -name "*.json" -exec python3 -m json.tool {} + > /
 1. ✅ Data synced and split
 2. ✅ Directory structure verified
 3. ➡️ **Proceed to [figma-build.md](figma-build.md) workflow**
-
-**In figma-build.md, AI will:**
-
-- Read all split JSON files in order
-- Extract design tokens and properties
-- Generate production-ready components
-- Validate UI against Figma design

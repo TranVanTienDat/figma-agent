@@ -9,10 +9,20 @@ This workflow converts your synced Figma design data into production-ready React
 ## Prerequisites
 
 - The `figma-agent/project.md` must contain the correct project context (Tech Stack, Styling, etc.).
-- The `figma-agent/data/` directory must contain the synced design data.
+- The `figma-agent/data/` directory must contain the synced design data (ALL JSON files).
+- **CRITICAL**: All JSON files in `figma-agent/data/` and subdirectories MUST be read without exception.
 - The `split_node_data.py` script must be available in `.agent/skills/figma-analysis/scripts/`.
 
 ## 🛠️ Technical Requirements
+
+### 0. CRITICAL: No Files Will Be Skipped ⭐⭐⭐
+
+- **RULE #1**: Every `.json` file in `figma-agent/data/` directory MUST be read
+- **RULE #2**: Every `.json` file in subdirectories (e.g., `sections/`, `target-node-split/`) MUST be read
+- **RULE #3**: No file naming convention determines if a file is skipped - ALL files are processed
+- **RULE #4**: If a file exists in the data directory, it will be included in the analysis
+- **RULE #5**: Cross-validate using grep to ensure no data is missed
+- **VERIFICATION**: Run final check: `find figma-agent/data -type f -name "*.json" | wc -l` - count must match processed files
 
 ### 1. Data Processing Standards (New ⭐)
 
@@ -37,154 +47,226 @@ This workflow converts your synced Figma design data into production-ready React
 
 The agent will perform the following steps:
 
-### Phase 1: Preprocessing (Critical for Accuracy)
+> **Note**: File splitting is already handled in the `sync-figma-data` workflow. Proceed directly to Phase 2: Analysis & Building.
 
-- [ ] **Check File Size**: If target data file > 1000 lines, proceed to split.
-- [ ] **Run Split Script**: Execute:
-  ```bash
-  python3 .agent/skills/figma-analysis/scripts/split_node_data.py figma-agent/data/<file>.json --max-lines 250
-  ```
-- [ ] **Verify Output**: Confirm generation of `summary.json`, `structure.json`, and `sections/`.
+## 🤖 AI Processing Order for Split Data (CRITICAL FOR ACCURACY)
 
-### Phase 2: Analysis & Building (Senior Fragmented Data Strategy)
+**READ FILES IN THIS EXACT ORDER TO AVOID BUILD ERRORS:**
 
-- [ ] **Step 1: Read `00-summary.json` (The Map)**
-  - Quickly understand node distribution (Text, Frames, Instances).
-  - Identify root frame layout and top-level sections.
-  - **MANDATORY**: Verify **Background Color** via root fills (Visual Dominance Rule).
-- [ ] **Step 2: Read `01-structure.json` (The Skeleton)**
-  - Map the 3-level hierarchy and plan the component tree.
-  - Detect layout patterns (Flex/Grid) and spacing.
-- [ ] **Step 3: Read `02-texts.json` (Source of Truth for Copy)**
-  - Extract all 40+ text nodes and their styles (Manrope,Inter, etc.).
-  - Identify critical labels (Prices, Ratings, Labels) for visual audit.
-- [ ] **Step 4: Read `03-instances.json` (Component Discovery)**
-  - Scan for component IDs and variants.
-  - Link instances to their master logic (Buttons, Icons, Badges).
-- [ ] **Step 5: Read `04-images.json` & `05-colors.json` (Design Tokens)**
-  - Extract image metadata and resolve the full Color Palette.
-  - Map hex codes to semantic design tokens (Primary, Neutral).
-- [ ] **Step 6: Build Sections (Incremental Build)**
-  - Read `sections/*.json` one by one (200-250 lines each).
-  - Process fragments sequentially to maintain accuracy < 1% deviation.
-- [ ] **Step 7: Reference `99-full-tree.json` (Debug Mode)**
-  - Only use for cross-referencing buried data or complex recursive overrides.
+### 0️⃣ **Design Images** ⭐⭐⭐⭐⭐ (START HERE - VISUAL REFERENCE)
 
-### Phase 3: Implementation & Validation
+- **Location**: `figma-agent/data/images/*`
+- **Content**: PNG/SVG design screenshots
+- **Purpose**: Visual reference for what needs to be built
+- **Action**:
+  - Open each design image to understand layout, colors, typography
+  - Take mental notes of: spacing, colors, text content, components
+  - This is your ground truth for validation later
 
-- [ ] **Code Generation**: Write JSX/TSX incrementally section by section.
-- [ ] **Pixel-Perfect Validation Audit**:
-  - Compare generated layout against the "Real UI" image.
-  - Verify presence of: Star ratings, precise prices, license list items, and floating nav buttons.
-  - If deviation > 4%, perform a "Sub-node Re-scan" and fix the code.
+### 1️⃣ **`00-summary.json`** ⭐⭐⭐ (START HERE)
 
-## 📚 Implementation Guide
+- **Content**: Statistics, node counts, colors, sections overview
+- **Purpose**: Get bird's eye view of the entire design
+- **Action**: Extract `statistics` (total_nodes, text_nodes, component_instances), `top_colors`, `sections` list
 
-### Handling Large Data (The "Disovery-First Strategy")
+### 2️⃣ **`01-structure.json`** ⭐⭐ (UNDERSTAND HIERARCHY)
 
-**✅ Mandatory Workflow Order:**
+- **Content**: Hierarchical tree (3 levels deep)
+- **Purpose**: Understand component organization and nesting
+- **Action**: Map the structure tree, identify root frames and child components
 
-1.  **Index**: Run `grep -r "type" figma-agent/data/` to classify files.
-2.  **Locate Root**: Find the file containing the top-level Frame ID.
-3.  **Keyword Safety Net**:
-    - `grep -r "$1391" figma-agent/data/`
-    - `grep -r "Rating" figma-agent/data/`
-    - This bypasses random filenames and finds the exact data fragment needed.
+### 3️⃣ **`02-texts.json`** ⭐⭐ (GET ALL TEXT CONTENT)
 
-### Example: Mapping Tokens
+- **Content**: All text nodes with styles and content
+- **Purpose**: Know what text labels, prices, descriptions, etc. are needed
+- **Action**: Extract all text content and associate with components
+
+### 4️⃣ **`03-instances.json`** ⭐⭐ (FIND COMPONENTS)
+
+- **Content**: All component instances and their references
+- **Purpose**: Identify which components are used and where
+- **Action**: Map component instances to master components
+
+### 5️⃣ **`04-images.json`** ⭐ (REFERENCE IMAGES)
+
+- **Content**: Image and icon nodes
+- **Purpose**: Know which assets need to be handled
+- **Action**: List all images/icons that need to be imported
+
+### 6️⃣ **`05-colors.json`** ⭐⭐⭐ (MAP COLOR TOKENS)
+
+- **Content**: Complete color palette with usage counts
+- **Purpose**: Create design tokens and color system
+- **Action**: Create color variables and map to theme
+
+### 7️⃣ **`sections/*.json`** ⭐⭐⭐⭐ (DIVE INTO DETAILS - DO THIS FOR EACH SECTION)
+
+- **Content**: Individual section data (200-300 lines each)
+- **Purpose**: Get detailed properties for each component
+- **Action**: Read all section files in order, extract fills, strokes, typography, layout
+
+### 8️⃣ **`99-full-tree.json`** ⭐ (LAST RESORT ONLY)
+
+- **Content**: Complete raw Figma node tree
+- **Purpose**: Backup if you need all details
+- **Action**: Only read if `sections/*.json` doesn't have needed info
+
+---
+
+**⚠️ IMPORTANT: Do NOT skip to step 7 (sections). Follow order 1-6 first!**
+
+**✅ Build Path**: `00-summary → 01-structure → 02-texts → 03-instances → 04-images → 05-colors → sections/ → build`
+
+---
+
+## ⚠️ CRITICAL: UI Review & Visual Validation
+
+**THIS STEP IS NOT OPTIONAL - YOU MUST DO THIS AFTER EVERY BUILD**
+
+### Build → Compare → Fix Loop
+
+After building UI, you **MUST**:
+
+1. **Compare generated UI against original design image** (from `figma-agent/data/images/`)
+2. **Identify any visual differences** (color, spacing, text, components)
+3. **Fix all issues** until UI matches design image exactly
+4. **Re-validate** against original image again
+
+```
+┌─────────────────────────────────────────────────────┐
+│ 1. Build component from image + JSON data           │
+├─────────────────────────────────────────────────────┤
+│ 2. Open original design image from:                 │
+│    figma-agent/data/images/[design-image].png       │
+├─────────────────────────────────────────────────────┤
+│ 3. Place side-by-side: Generated UI ↔ Design Image  │
+├─────────────────────────────────────────────────────┤
+│ 4. Compare visually:                                 │
+│    ✅ Colors match?                                  │
+│    ✅ Spacing/padding correct?                       │
+│    ✅ Text content matches?                          │
+│    ✅ All components present?                        │
+│    ✅ Typography correct (size/weight)?              │
+├─────────────────────────────────────────────────────┤
+│ 5a. NO DIFFERENCES → ✅ DONE                         │
+│ 5b. FOUND DIFFERENCES → Fix code → Go to step 2     │
+└─────────────────────────────────────────────────────┘
+```
+
+### Post-Build Visual Validation (MANDATORY)
+
+After code generation, perform these checks **using design images as reference**:
+
+#### Step 1: Visual Comparison Scan (vs Design Image)
+
+```bash
+# Open the design image for reference
+open figma-agent/data/images/[design-image-filename].png
+```
+
+Then check:
+
+- [ ] **Layout & Spacing**: Does generated layout match image spacing exactly?
+- [ ] **All Components Present**: Every button/input/card in image is in your code?
+- [ ] **Text Content**: Text labels match image exactly (no missing text)?
+- [ ] **Images/Icons**: All images from design are displayed?
+- [ ] **Colors**: Background, text, borders match design image colors?
+
+#### Step 2: Detailed Comparison
+
+Compare these specific elements:
+
+1. **Visual Layout** (compare to image)
+   - [ ] Spacing/padding matches image
+   - [ ] Alignment (left/center/right) same as image?
+   - [ ] Element positions correct?
+
+2. **Colors** (compare to image)
+   - [ ] Background color matches image?
+   - [ ] Text color matches image?
+   - [ ] Button/accent colors match image?
+   - [ ] Border colors accurate?
+
+3. **Typography** (compare to image)
+   - [ ] Text content matches image exactly?
+   - [ ] Font size looks right (compare pixel sizes)?
+   - [ ] Font weight correct (bold/regular)?
+   - [ ] Line height/spacing correct?
+
+4. **Components** (compare to image)
+   - [ ] All buttons in image are present in code?
+   - [ ] All input fields in image are present?
+   - [ ] Cards/containers match image structure?
+   - [ ] Icons/images displayed correctly?
+
+#### Step 3: Error Detection (Find What's Wrong)
+
+If UI doesn't match image, identify the issue:
+
+- ❌ **Color mismatch**: Wrong RGB/hex value
+- ❌ **Spacing mismatch**: Padding/margin too large/small
+- ❌ **Missing element**: Component not in code
+- ❌ **Wrong text**: Text content doesn't match image
+- ❌ **Wrong layout**: Element positioned incorrectly
+- ❌ **Wrong size**: Component too large/small
+
+#### Step 4: Fix Issues
+
+For each difference found:
+
+```
+1. Identify problem
+   ↓
+2. Find root cause (check data vs code)
+   ↓
+3. Update component code
+   ↓
+4. Re-compare with image
+   ↓
+5. Match? → Next component : Back to step 1
+```
+
+Example fix:
 
 ```tsx
-// Using CSS Variables from tokens.json
-const styles = {
-  header: "bg-[var(--color-primary)] text-[var(--font-size-large)]",
-};
+// BEFORE (Wrong - doesn't match image)
+<div className="bg-red-500 p-4">  {/* Wrong color! */}
+  {text}
+</div>
+
+// AFTER (Fixed - matches image)
+<div className="bg-blue-600 p-8">  {/* Now matches image! */}
+  {text}
+</div>
 ```
 
-## ✅ Completion & UI Validation
+#### Step 5: Re-validate
 
-When finished, the agent **MUST**:
-
-1.  **Mark the checklist** completed.
-2.  **Provide a summary** of components created and file structure.
-3.  **Confirm** that split data was used for better accuracy.
-
-### 🎨 UI Verification Checklist (CRITICAL)
-
-Before declaring completion, perform the following validation:
-
-- [ ] **Visual Comparison**: Compare the generated UI against the original Figma design
-  - Check layout structure (spacing, alignment, hierarchy)
-  - Verify all components are present (buttons, inputs, cards, etc.)
-  - Confirm text content matches exactly (no missing or incorrect labels)
-- [ ] **Design Accuracy Audit**:
-  - [ ] Colors match the design tokens (no color deviations)
-  - [ ] Typography matches (font sizes, weights, line heights)
-  - [ ] Spacing matches specifications (padding, margins, gaps)
-  - [ ] Component states visible (hover, active, disabled states if applicable)
-- [ ] **Content Completeness**:
-  - [ ] All text nodes from `02-texts.json` are rendered
-  - [ ] All images from `04-images.json` are displayed
-  - [ ] All component instances are correctly linked
-  - [ ] No placeholder content remains (e.g., "Lorem Ipsum", "[COMPONENT]")
-- [ ] **Responsive Behavior** (if applicable):
-  - [ ] Layout adapts correctly on different screen sizes
-  - [ ] Mobile/tablet variations match design specifications
-  - [ ] Navigation collapses/expands as designed
-- [ ] **Accessibility & Code Quality**:
-  - [ ] Semantic HTML structure is correct (h1-h4 hierarchy)
-  - [ ] ARIA labels present where needed
-  - [ ] No hard-coded values (all values from tokens)
-  - [ ] TypeScript types properly defined
-
-### Quality Criteria
-
-**Acceptable Deviation**: ≤ 4% visual deviation
-
-- **0-2%**: Minor spacing/sizing differences → Acceptable ✅
-- **2-4%**: Small color tone differences, minor layout shifts → Acceptable with notes ⚠️
-- **> 4%**: Missing components, wrong colors, incorrect text → FAILURE ❌ (Must be refactored)
-
-If deviation > 4%, you **MUST**:
-
-- Identify the problematic elements
-- Re-scan the Figma data using grep for missing components
-- Update the code to match the design precisely
-- Re-validate until deviation ≤ 4%
-
-### Final Validation Report
-
-Provide a detailed report including:
-
-```markdown
-## Build Completion Report
-
-**Status**: ✅ COMPLETE / ❌ NEEDS REVISION
-
-### Components Built
-
-- [x] Component Name (Lines: 50-100, File: components/ComponentName.tsx)
-- [x] Component Name (Lines: 101-150, File: components/ComponentName.tsx)
-
-### Design Accuracy
-
-- Visual Deviation: 2.1% ✅
-- Missing Elements: None
-- Color Accuracy: 100% ✅
-- Typography Match: 100% ✅
-
-### Files Generated
-
-- src/components/...
-- src/styles/...
-- src/types/...
-
-### Notes
-
-- All colors mapped from 05-colors.json
-- Typography extracted from 02-texts.json
-- Layout generated from split sections
-- No hard-coded values used
+```bash
+# After fixing all issues:
+# 1. Regenerate/rebuild component
+# 2. Open design image again
+# 3. Compare side-by-side with generated UI
+# 4. Confirm: Does it match now?
 ```
+
+### Quality Criteria (vs Design Image)
+
+**Target**: UI matches design image exactly (≤ 4% deviation)
+
+- **0-2%**: Minor spacing/sizing differences → ✅ ACCEPTABLE
+- **2-4%**: Small color tone differences, minor layout shifts → ⚠️ ACCEPTABLE WITH NOTES
+- **> 4%**: Missing components, wrong colors, incorrect text → ❌ FAILURE (MUST FIX)
+
+### Common Issues to Watch For
+
+| Issue                    | How to Fix                                        |
+| ------------------------ | ------------------------------------------------- |
+| Colors don't match image | Check hex value in styles.json, update CSS class  |
+| Spacing wrong vs image   | Adjust padding/margin to match image measurements |
+| Text missing or wrong    | Check images-manifest.json, verify text content   |
+| Component missing        | Check component was added to JSX                  |
+| Wrong layout vs image    | Verify flexbox/grid setup matches image structure |
 
 ## 🚀 Usage
 

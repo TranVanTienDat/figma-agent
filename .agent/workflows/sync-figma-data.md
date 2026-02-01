@@ -9,100 +9,203 @@ This workflow synchronizes the fundamental data from a Figma file into the `figm
 - Ensure `FIGMA_ACCESS_TOKEN` is set in your environment (or `.env`).
 - You need the FILE_KEY of your Figma Design.
 
-## 🚀 Optimization Strategies
+## 🚀 Quick Start
 
-For large Figma files (e.g., complex mockups with thousands of nodes), a full sync can be slow. Use these methods to optimize:
-
-### 1. Light Sync (Top-level only)
-
-Simply use the file summary command without depth restrictions if you want full tree (careful with large files), or use specific node extraction.
+Call this **ONE command** to sync all data sequentially:
 
 ```bash
-python3 .agent/skills/figma-analysis/scripts/figma_cli.py file <FILE_KEY> --output figma-agent/data/file-structure.json --summary
+python3 .agent/skills/figma-analysis/scripts/figma_cli.py sync-all <FILE_KEY> <NODE_IDS> --output-dir figma-agent/data
 ```
 
-### 2. Partial Sync (Specific Nodes)
-
-If you already know the Node IDs (found in Figma URL as `node-id=...`), fetch only what you need. This is much faster and uses less memory.
+**Example:**
 
 ```bash
-# Replace <NODE_IDS> with comma-separated IDs like 1:2,5:10
-python3 .agent/skills/figma-analysis/scripts/figma_cli.py nodes <FILE_KEY> <NODE_IDS> --output figma-agent/data/target-node.json
+python3 .agent/skills/figma-analysis/scripts/figma_cli.py sync-all abcd1234 "1:2,3:4,5:6" --output-dir figma-agent/data
 ```
 
-### 3. Handle Rate Limits
+This will automatically:
 
-The tool automatically handles 429 errors. If you see wait messages, let the script finish. It is retrying with a backoff strategy as recommended by Figma.
+1. ✏️ Fetch Node Tree
+2. ✏️ Fetch Variables (Design Tokens)
+3. ✏️ Fetch Styles (Typography & Colors)
+4. ✏️ Fetch Components
+5. ✏️ Export Images (SVG format by default)
+
+All data saves to separate JSON files in `figma-agent/data/`.
 
 ---
 
-### 4. Fetch Local Variables (Enterprise Feature - Optional)
-
-If your organization uses Figma Local Variables for tokens (colors, numbers, etc.), use this command:
+## ⚙️ Optional Parameters
 
 ```bash
-python3 .agent/skills/figma-analysis/scripts/figma_cli.py local-variables <FILE_KEY> --output figma-agent/data/local-variables.json
+# Change image format (default: svg)
+--format png
+
+# Change image scale (default: 1)
+--scale 2
+
+# Custom output directory (default: figma-agent/data)
+--output-dir ./my-data
 ```
 
-### 5. Fetch Published Libraries (Optional)
-
-If your file uses a Team Library, fetch the published components and styles:
+**Example with options:**
 
 ```bash
-python3 .agent/skills/figma-analysis/scripts/figma_cli.py components <FILE_KEY> --output figma-agent/data/components.json
-python3 .agent/skills/figma-analysis/scripts/figma_cli.py styles <FILE_KEY> --output figma-agent/data/styles.json
-```
-
-### 6. Extract Local Tokens (Fallback)
-
-If `styles.json` is empty (common for draft files), extract tokens directly from your downloaded node data:
-
-```bash
-# Analyze the specific node you just downloaded
-python3 .agent/skills/figma-analysis/scripts/figma_cli.py extract-tokens figma-agent/data/target-node.json --output figma-agent/data/tokens.json
+python3 .agent/skills/figma-analysis/scripts/figma_cli.py sync-all <FILE_KEY> <NODE_IDS> \
+  --format png \
+  --scale 2 \
+  --output-dir figma-agent/data
 ```
 
 ---
 
-# Usage Flow
+## 📌 Finding NODE_IDS
 
-Simply gõ lệnh `/sync-figma-data [Link-Figma]` để chạy luồng mặc định. AI sẽ tự động:
+In Figma URL, look for `node-id=`:
 
-1. Tải cấu trúc file.
-2. Tải Components & Styles (nếu có).
-3. Nếu tải Styles thất bại, nó sẽ tự động Extract Tokens từ dữ liệu thô.
-4. **Tự động chia nhỏ (Auto-Split)** các file node lớn để tối ưu cho việc Build UI.
+```
+https://figma.com/design/FILE_KEY/...?node-id=1:2
+                                             ^^^
+```
+
+For multiple nodes, use comma-separated:
 
 ```bash
-# Auto-run split after sync
-for file in figma-agent/data/*node.json; do
-    if [ -f "$file" ]; then
-        python3 .agent/skills/figma-analysis/scripts/split_node_data.py "$file" --max-lines 250
-    fi
-done
+sync-all <FILE_KEY> "1:2,5:10,20:30"
 ```
 
-## 📁 Output Structure (Split Data)
+## 📁 Output Structure
 
-When data is split, a new directory `<file>-split/` is created:
+After running `sync-all`, you'll have these files in `figma-agent/data/`:
 
 ```
-<your-file>-split/
-├── README.md                    # Human-readable guide
-├── 00-summary.json             # 📊 START HERE - Statistics & overview
-├── 01-structure.json           # 🌳 Hierarchy (3 levels deep)
-├── 02-texts.json               # 📝 All text content
-├── 03-instances.json           # 🧩 Component instances
-├── 04-images.json              # 🖼️  Images and icons
-├── 05-colors.json              # 🎨 Color palette
-├── sections/                   # 📂 Individual sections (200-300 lines each)
-└── 99-full-tree.json           # 🔍 Complete data (use only if needed)
+figma-agent/data/
+├── node-tree.json          # Node structure & layout
+├── variables.json          # Design tokens (colors, typography)
+├── styles.json             # Published styles
+├── components.json         # Published components
+├── images.json             # Image URLs
+└── sync-summary.json       # Summary of sync status
 ```
 
-## 🤖 AI Processing Order for Split Data
+---
 
-1. **Read `00-summary.json`** first to get an overview.
-2. **Read `01-structure.json`** to understand the hierarchy.
-3. **Read `02-texts.json`** for all text content.
-4. **Read specific `sections/*.json`** when building individual components.
-5. **Only read `99-full-tree.json`** as a last resort.
+## 🔄 Next: Split Large Node Files
+
+If `node-tree.json` is large (>1000 lines), split it for easier processing:
+
+```bash
+python3 .agent/skills/figma-analysis/scripts/split_node_data.py figma-agent/data/node-tree.json --max-lines 250
+```
+
+This creates `node-tree-split/` with organized sections.
+
+## 🤖 AI Processing Order for Split Data (CRITICAL)
+
+**After sync completes, follow this exact order:**
+
+### Step 1: Discover All Files
+
+```bash
+find figma-agent/data -type f -name "*.json" | sort
+find figma-agent/data -type f -name "*.json" | wc -l
+```
+
+- [ ] List all JSON files
+- [ ] Confirm split directories exist
+- [ ] Verify sections/ populated
+
+### Step 2: Read `00-summary.json` ⭐⭐⭐
+
+- [ ] Extract statistics
+- [ ] List all colors
+- [ ] Identify sections
+- [ ] Understand distribution
+
+### Step 3: Read `01-structure.json` ⭐⭐
+
+- [ ] Map hierarchy
+- [ ] Identify root frames
+- [ ] Plan component tree
+
+### Step 4: Read `02-texts.json` ⭐⭐
+
+- [ ] Extract all text
+- [ ] Map to components
+- [ ] Verify completeness
+
+### Step 5: Read `03-instances.json` ⭐⭐
+
+- [ ] List all instances
+- [ ] Map to masters
+- [ ] Count usage
+
+### Step 6: Read `04-images.json` & `05-colors.json` ⭐⭐⭐
+
+- [ ] List all images
+- [ ] Extract color palette
+- [ ] Create tokens
+
+### Step 7: Read All `sections/*.json` ⭐⭐⭐⭐
+
+- [ ] Read every section
+- [ ] Extract properties
+- [ ] Validate completeness
+
+### Step 8: Read `99-full-tree.json` (If Needed)
+
+- [ ] Only if sections insufficient
+- [ ] Use as backup
+- [ ] Validate against sections
+
+---
+
+## ✅ Post-Sync Validation
+
+After sync completes, verify the following:
+
+### Files Created
+
+- [ ] `figma-agent/data/` directory populated with JSON files
+- [ ] At least one `*node.json` file exists
+- [ ] Optional files created (components.json, styles.json, tokens.json)
+- [ ] Split directories created (`*-split/` folders with sections/)
+
+### Data Quality Checks
+
+```bash
+# Verify JSON files
+find figma-agent/data -type f -name "*.json" | wc -l
+
+# Check total lines
+find figma-agent/data -type f -name "*.json" -exec wc -l {} + | tail -1
+
+# Validate JSON syntax
+find figma-agent/data -type f -name "*.json" -exec python3 -m json.tool {} + > /dev/null 2>&1 && echo "✅ All JSON valid" || echo "❌ Invalid JSON found"
+```
+
+### Validation Checklist
+
+- [ ] All JSON files are valid (no parse errors)
+- [ ] No duplicate files
+- [ ] Split data organized in sections/
+- [ ] Summary files (00-\*.json) exist
+- [ ] Total line count > 1000
+- [ ] Token/color files present
+
+---
+
+## 🎯 Next Steps: Build the UI
+
+**After completing sync and validation:**
+
+1. ✅ Data synced and split
+2. ✅ Directory structure verified
+3. ➡️ **Proceed to [figma-build.md](figma-build.md) workflow**
+
+**In figma-build.md, AI will:**
+
+- Read all split JSON files in order
+- Extract design tokens and properties
+- Generate production-ready components
+- Validate UI against Figma design

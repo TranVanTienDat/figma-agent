@@ -82,12 +82,7 @@ Download design data to your machine:
 **`/sync-figma-data [Figma-Link]`**
 _Tip: The tool supports Auto-Retry if it encounters Figma API limits (Rate Limit)._
 
-### Step 4: Map Tokens (Optional)
-
-Convert Styles from Figma into CSS/JSON variables:
-**`/figma-map-tokens`**
-
-### Step 5: Build UI
+### Step 4: Build UI
 
 Start generating code using natural language:
 **`/figma-build Build a responsive Header Section for me.`**

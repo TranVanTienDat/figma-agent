@@ -6,6 +6,8 @@ description: Auto-configure figma-agent/project.md by analyzing the project
 
 This workflow analyzes your project structure and dependencies to automatically populate the `figma-agent/project.md` file with the correct context.
 
+**When to use**: Run this workflow when starting a new project integration or updating an existing project's configuration in figma-agent.
+
 ## 1. Analyze Project Structure
 
 - Read `package.json` to identify:
@@ -36,11 +38,27 @@ This workflow analyzes your project structure and dependencies to automatically 
 ## 3. Update .gitignore
 
 - Check if `.gitignore` exists in the root directory.
-- If it exists, check if `figma-agent` is already ignored.
-- If not ignored, append `figma-agent` to `.gitignore`.
-- If `.gitignore` does not exist, skip this step.
+- If it exists:
+  - Check if `figma-agent/` is already ignored.
+  - If not ignored, append `figma-agent/` as a new line to `.gitignore`.
+- If `.gitignore` does not exist, create it with `figma-agent/` as the first entry.
 
-## 4. User Verification
+**Result**: The `.gitignore` file should contain:
+
+```
+figma-agent/
+```
+
+## 4. Verify Configuration
+
+Before finalizing:
+
+- ✅ Is `project.md` valid YAML/Markdown?
+- ✅ Is the tech stack detected correctly?
+- ✅ Are there any conflicts or inconsistencies?
+- ✅ Does the configuration match the actual project?
+
+## 5. User Verification
 
 - Show the updated content of `figma-agent/project.md` to the user.
 - Ask if they want to add any specific domain knowledge or custom rules to the file.

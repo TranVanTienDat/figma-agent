@@ -4,6 +4,8 @@ import json
 import os
 import sys
 import time
+from urllib.parse import urlparse
+from pathlib import Path
 
 class FigmaClient:
     """
@@ -119,3 +121,63 @@ class FigmaClient:
             'scale': scale
         }
         return self._request("GET", f"/images/{file_key}", params=params)
+
+    def download_images(self, file_key, node_ids, output_dir, format='svg', scale=1):
+        """
+        Fetch image URLs and download them to output_dir.
+        Returns list of downloaded file paths.
+        """
+        if isinstance(node_ids, list):
+            node_ids_str = ",".join(node_ids)
+        else:
+            node_ids_str = node_ids
+            node_ids = node_ids_str.split(",")
+        
+        # Get image URLs
+        print(f"   📡 Fetching image URLs...")
+        images_response = self.get_images(file_key, node_ids_str, format=format, scale=scale)
+        
+        if not images_response or "images" not in images_response:
+            print(f"   ⚠️  No images found in response")
+            return {}
+        
+        # Create output directory
+        os.makedirs(output_dir, exist_ok=True)
+        
+        images_data = images_response["images"]
+        downloaded = {}
+        
+        # Download each image
+        for node_id, image_url in images_data.items():
+            if not image_url:
+                continue
+                
+            try:
+                # Extract filename from URL and add format extension
+                parsed_url = urlparse(image_url)
+                base_filename = os.path.basename(parsed_url.path) or f"image-{node_id}"
+                filename = f"{base_filename}.{format}"
+                filepath = os.path.join(output_dir, filename)
+                
+                # Download image
+                print(f"   ⬇️  Downloading {node_id}...")
+                response = requests.get(image_url, timeout=30)
+                response.raise_for_status()
+                
+                # Save to file
+                with open(filepath, 'wb') as f:
+                    f.write(response.content)
+                
+                downloaded[node_id] = {
+                    "url": image_url,
+                    "local_path": filepath,
+                    "format": format,
+                    "size": len(response.content)
+                }
+                print(f"      ✅ Saved: {filepath}")
+                
+            except Exception as e:
+                print(f"      ❌ Failed to download {node_id}: {e}")
+                downloaded[node_id] = {"url": image_url, "error": str(e)}
+        
+        return downloaded

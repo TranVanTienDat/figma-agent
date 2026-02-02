@@ -15,11 +15,11 @@ metadata:
 
 ## 🏗️ Core (Core System)
 
-1.  **MANDATORY: Extensive Context Reading**: Before starting ANY code generation, the agent MUST read `figma-agent/project.md` and the content of the split data directories.
+1.  **MANDATORY: Extensive Context Reading**: Before starting ANY code generation, the agent MUST read `figma-agent/project.yaml` and the content of the split data directories.
 2.  **Zero-Guessing Policy**: If a property like `layoutPositioning: "ABSOLUTE"` is found, the agent **MUST** calculate its position relative to the main container and apply `fixed` or `absolute` positioning.
 3.  **Global Search Integration**: If a UI element is visible in the design (e.g., Star Ratings, floating "Prev/Next" buttons) but missing in the primary section JSON, the agent **MUST** grep the entire `figma-agent/data/` directory for that element's label to find its actual data.
 4.  **Token System**: Build the variable system by reading `05-colors.json` and `02-texts.json`. Any hex code found in `data.json` should be matched against `05-colors.json` to see if a variable exists.
-5.  **Compliance**: Strictly adhere to the tech stack in `project.md`. Handle special cases like `text-decoration: line-through` for prices.
+5.  **Compliance**: Strictly adhere to the tech stack in `project.yaml`. Handle special cases like `text-decoration: line-through` for prices.
 
 ## 📋 Requirements (Technical Standards)
 
@@ -48,7 +48,7 @@ metadata:
 ### Phase 2: Foundation & Shell
 
 - **Step 1: Read Project Context (MANDATORY)**:
-  - Read `figma-agent/project.md` → Section **"2. Tech Stack"** → Field **"Styling"**.
+  - Read `figma-agent/project.yaml` → Section **"techStack"** → Field **"styling"**.
   - Identify the styling system: `CSS`, `Tailwind`, `MUI`, `Joy UI`, `Styled Components`, `Emotion`, etc.
 - **Step 2: Setup Design Tokens (Based on Detected System)**:
   - **If Styling = "CSS" or "CSS Modules"**:

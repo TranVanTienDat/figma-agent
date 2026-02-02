@@ -1,10 +1,10 @@
 ---
-description: Auto-configure figma-agent/project.md by analyzing the project
+description: Auto-configure figma-agent/project.yaml by analyzing the project
 ---
 
 # Figma Agent Configuration Workflow
 
-This workflow analyzes your project structure and dependencies to automatically populate the `figma-agent/project.md` file with the correct context.
+This workflow analyzes your project structure and dependencies to automatically populate the `figma-agent/project.yaml` file with the correct context.
 
 **When to use**: Run this workflow when starting a new project integration or updating an existing project's configuration in figma-agent.
 
@@ -19,8 +19,8 @@ This workflow analyzes your project structure and dependencies to automatically 
 
 ## 2. Update Configuration
 
-1. Read the existing `figma-agent/project.md`.
-2. Based on the analysis, update the corresponding sections in `project.md`:
+1. Read the existing `figma-agent/project.yaml`.
+2. Based on the analysis, update the corresponding sections in `project.yaml`:
    - **Section 1. Project Overview**: Fill in Name, Description (from package.json/README) and infer Domain.
    - **Section 2. Tech Stack**: Fill in Framework, Language, Styling, etc.
    - **Section 3. Coding Conventions & Rules**: Suggest default best-practice rules based on the project type (e.g., "Use functional components", "Mobile-first").
@@ -53,12 +53,12 @@ figma-agent/
 
 Before finalizing:
 
-- ✅ Is `project.md` valid YAML/Markdown?
+- ✅ Is `project.yaml` valid YAML?
 - ✅ Is the tech stack detected correctly?
 - ✅ Are there any conflicts or inconsistencies?
 - ✅ Does the configuration match the actual project?
 
 ## 5. User Verification
 
-- Show the updated content of `figma-agent/project.md` to the user.
+- Show the updated content of `figma-agent/project.yaml` to the user.
 - Ask if they want to add any specific domain knowledge or custom rules to the file.

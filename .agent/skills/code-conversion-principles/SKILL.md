@@ -78,11 +78,11 @@ Before deep analysis, the agent **MUST** create a memory map of `NodeID -> FileP
 
 ## 4. Styling Compliance Rule (CRITICAL)
 
-Before generating ANY code, the agent **MUST** detect and use the styling system from `project.md`:
+Before generating ANY code, the agent **MUST** detect and use the styling system from `project.yaml`:
 
 ### Detection Steps
 
-1. Read `figma-agent/project.md` → [2. Tech Stack] → "Styling" field
+1. Read `figma-agent/project.yaml` → [techStack] → "styling" field
 2. Identify system: CSS, Tailwind, MUI, Joy UI, Styled Components, Emotion, Sass
 3. Verify markers: Check `package.json` and config files
 4. Use ONLY the detected styling system

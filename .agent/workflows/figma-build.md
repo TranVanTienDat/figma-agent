@@ -8,7 +8,7 @@ This workflow converts your synced Figma design data into production-ready React
 
 ## Prerequisites
 
-- The `figma-agent/project.md` must contain the correct project context (Tech Stack, Styling, etc.).
+- The `figma-agent/project.yaml` must contain the correct project context (Tech Stack, Styling, etc.).
 - The `figma-agent/data/` directory must contain the synced design data (ALL JSON files).
 - **CRITICAL**: All JSON files in `figma-agent/data/` and subdirectories MUST be read without exception.
 

@@ -126,19 +126,19 @@ function initFigmaAgentStructureAntigravity(destDir) {
     }
   });
 
-  // 3. Create project.md
-  const srcConfigPath = path.join(packageDir, "figma-agent", "project.md");
-  const destConfigPath = path.join(figmaAgentDir, "project.md");
+  // 3. Create project.yaml
+  const srcConfigPath = path.join(packageDir, "figma-agent", "project.yaml");
+  const destConfigPath = path.join(figmaAgentDir, "project.yaml");
 
   if (fs.existsSync(srcConfigPath)) {
     if (!fs.existsSync(destConfigPath)) {
       fs.copyFileSync(srcConfigPath, destConfigPath);
-      console.log("✅ Created: figma-agent/project.md");
+      console.log("✅ Created: figma-agent/project.yaml");
     } else {
-      console.log("⏭️  Exists: figma-agent/project.md");
+      console.log("⏭️  Exists: figma-agent/project.yaml");
     }
   } else {
-    console.warn("⚠️  Warning: Template project.md not found in package.");
+    console.warn("⚠️  Warning: Template project.yaml not found in package.");
   }
 }
 
@@ -172,19 +172,19 @@ function initFigmaAgentStructureCopilot(destDir) {
     }
   });
 
-  // 3. Create project.md
-  const srcConfigPath = path.join(packageDir, "figma-agent", "project.md");
-  const destConfigPath = path.join(figmaAgentDir, "project.md");
+  // 3. Create project.yaml
+  const srcConfigPath = path.join(packageDir, "figma-agent", "project.yaml");
+  const destConfigPath = path.join(figmaAgentDir, "project.yaml");
 
   if (fs.existsSync(srcConfigPath)) {
     if (!fs.existsSync(destConfigPath)) {
       fs.copyFileSync(srcConfigPath, destConfigPath);
-      console.log("✅ Created: figma-agent/project.md");
+      console.log("✅ Created: figma-agent/project.yaml");
     } else {
-      console.log("⏭️  Exists: figma-agent/project.md");
+      console.log("⏭️  Exists: figma-agent/project.yaml");
     }
   } else {
-    console.warn("⚠️  Warning: Template project.md not found in package.");
+    console.warn("⚠️  Warning: Template project.yaml not found in package.");
   }
 }
 

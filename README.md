@@ -93,7 +93,7 @@ Start generating code using natural language:
 
 Centralized and transparent data management system:
 
-- `project.md`: Contains project context (Tech Stack, coding rules, implementation status).
+- `project.yaml`: Contains project context (Tech Stack, coding rules, implementation status).
 - `data/`: Raw data synced from Figma (styles, components, file structure).
 
 ---

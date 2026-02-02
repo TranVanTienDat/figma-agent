@@ -177,7 +177,7 @@ Extracted data will be saved to `figma-agent/` according to the following diagra
 
 ```
 figma-agent/
-├── project.md                      # Tech Stack & Custom Rules
+├── project.yaml                    # Tech Stack & Custom Rules
 ├── data/                           # Raw Figma sync data
 │   ├── file-structure.json
 │   ├── styles.json

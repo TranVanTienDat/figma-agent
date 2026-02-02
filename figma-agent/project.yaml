@@ -1,0 +1,27 @@
+# Project Configuration
+# This file serves as the single source of truth for the project context, technical stack, and coding conventions.
+# The AI Agent will read this file to understand how to generate code that fits your project.
+
+projectOverview:
+  name: ""
+  description: ""
+  domain: ""
+
+techStack:
+  framework: ""
+  language: ""
+  styling: ""
+  stateManagement: ""
+  icons: ""
+  otherLibs: ""
+
+codingConventions:
+  componentStructure: ""
+  namingConvention: ""
+  responsiveStrategy: ""
+  commentsDocs: ""
+
+figmaImplementationStatus:
+  designSystemTokensMapped: false
+  componentsAnalyzed: false
+  layoutStructureDefined: false

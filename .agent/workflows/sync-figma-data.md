@@ -29,7 +29,7 @@ This will automatically:
 2. ✏️ Fetch Variables (Design Tokens)
 3. ✏️ Fetch Styles (Typography & Colors)
 4. ✏️ Fetch Components
-5. ✏️ Export Images (SVG format by default)
+5. ✏️ Export Images
 
 All data saves to separate JSON files in `figma-agent/data/`.
 
@@ -38,14 +38,14 @@ All data saves to separate JSON files in `figma-agent/data/`.
 ## ⚙️ Optional Parameters
 
 ```bash
-# Change image format (default: svg)
+# Change image format (default: png)
 --format png
 
 # Change image scale (default: 1)
 --scale 2
 
 # Custom output directory (default: figma-agent/data)
---output-dir ./my-data
+
 ```
 
 **Example with options:**
@@ -83,9 +83,9 @@ figma-agent/data/
 ├── node-tree.json          # Node structure & layout
 ├── variables.json          # Design tokens (colors, typography)
 ├── styles.json             # Published styles
-├── components.json         # Published components
-├── images.json             # Image URLs
+├── components.json         # Published components      # Image URLs
 └── sync-summary.json       # Summary of sync status
+└── images
 ```
 
 ---

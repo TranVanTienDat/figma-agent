@@ -20,8 +20,6 @@ This workflow converts your synced Figma design data into production-ready React
 - **RULE #2**: Every `.json` file in subdirectories (e.g., `sections/`, `target-node-split/`) MUST be read
 - **RULE #3**: No file naming convention determines if a file is skipped - ALL files are processed
 - **RULE #4**: If a file exists in the data directory, it will be included in the analysis
-- **RULE #5**: Cross-validate using grep to ensure no data is missed
-- **VERIFICATION**: Run final check: `find figma-agent/data -type f -name "*.json" | wc -l` - count must match processed files
 
 ### 1. Data Processing Standards (New ⭐)
 

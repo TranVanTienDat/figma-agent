@@ -2,7 +2,7 @@
 description: Sync Core Figma Data
 ---
 
-This workflow synchronizes the fundamental data from a Figma file into the `figma-agent/data` directory. It uses the improved Python `figma_core` to safely fetch data without overloading the API.
+This workflow synchronizes the fundamental data from a Figma file. It uses the Node.js Figma extraction script to safely fetch data without overloading the API.
 
 # Prerequisites
 
@@ -11,123 +11,107 @@ This workflow synchronizes the fundamental data from a Figma file into the `figm
 
 ## 🚀 Quick Start
 
-Call this **ONE command** to sync all data sequentially:
+Use the Node.js Figma extraction script to sync all data:
 
 ```bash
-python3 .agent/skills/figma-analysis/scripts/figma_cli.py sync-all <FILE_KEY> <NODE_IDS> --output-dir figma-agent/data
+node .agent/skills/figma-analysis/scripts/figma-extract.mjs
 ```
 
-**Example:**
+Edit the configuration in `figma-extract.mjs` before running:
 
-```bash
-python3 .agent/skills/figma-analysis/scripts/figma_cli.py sync-all abcd1234 "1:2,3:4,5:6" --output-dir figma-agent/data
-```
+- Set `FIGMA_FILE_KEY` (your design file ID)
+- Set `TARGET_NODE_ID` (the node to extract)
+- Add your token to `.env.figma` file
 
-This will automatically:
+1. ✏️ Fetch Node Tree (full hierarchy, no truncation)
+2. ✏️ Fetch Variables (Design Tokens - Enterprise only)
+3. ✏️ Fetch Styles (Typography & Effects)
+4. ✏️ Fetch Components (metadata)
+5. ✏️ Export Images (icon URLs)
 
-1. ✏️ Fetch Node Tree
-2. ✏️ Fetch Variables (Design Tokens)
-3. ✏️ Fetch Styles (Typography & Colors)
-4. ✏️ Fetch Components
-5. ✏️ Export Images
-
-All data saves to separate JSON files in `figma-agent/data/`.
+All data saves to `.figma-debug/enriched-tree.json` and supporting files.
 
 ---
 
-## ⚙️ Optional Parameters
+## ⚙️ Configuration
 
-```bash
-# Change image format (default: png)
---format png
+Edit these values in `figma-extract.mjs`:
 
-# Change image scale (default: 1)
---scale 2
-
-# Custom output directory (default: figma-agent/data)
-
+```javascript
+const FIGMA_FILE_KEY = "your_file_key_here"; // Change this
+const TARGET_NODE_ID = "52:184"; // Change this
+const ICON_NODE_IDS = []; // Optional: IDs to export as SVG
 ```
 
-**Example with options:**
+Set your token in `.env.figma`:
 
-```bash
-python3 .agent/skills/figma-analysis/scripts/figma_cli.py sync-all <FILE_KEY> <NODE_IDS> \
-  --format png \
-  --scale 2 \
-  --output-dir figma-agent/data
+```
+FIGMA_TOKEN=your_token_here
 ```
 
 ---
 
-## 📌 Finding NODE_IDS
+## 📌 Finding NODE_IDS and FILE_KEY
 
-In Figma URL, look for `node-id=`:
+In Figma URL, look for:
 
 ```
-https://figma.com/design/FILE_KEY/...?node-id=1:2
-                                             ^^^
+https://figma.com/design/FILE_KEY/...?node-id=NODE_ID
+                       ^^^^^^^^           ^^^^^^^
 ```
 
-For multiple nodes, use comma-separated:
+Example:
 
-```bash
-sync-all <FILE_KEY> "1:2,5:10,20:30"
-```
+- **FILE_KEY**: `i2JD5CfMgttyQqmDY5v72Z`
+- **NODE_ID**: `52:184` (colon format)
+
+For multiple nodes, export them separately.
 
 ## 📁 Output Structure
 
-After running `sync-all`, you'll have these files in `figma-agent/data/`:
+After running the script, you'll have these files in `.figma-debug/`:
 
 ```
-figma-agent/data/
-├── node-tree.json          # Node structure & layout
-├── variables.json          # Design tokens (colors, typography)
-├── styles.json             # Published styles
-├── components.json         # Published components      # Image URLs
-└── sync-summary.json       # Summary of sync status
-└── images
+.figma-debug/
+├── enriched-tree.json           # Main output: node tree with token mappings
+├── node-tree-raw.json           # Raw Figma API response
+├── variables.json               # Design tokens (if Enterprise)
+├── styles.json                  # Published styles metadata
+├── components.json              # Published components metadata
+├── icons-urls.json              # Icon export URLs (if configured)
+└── assets/                       # Downloaded icons (if configured)
 ```
+
+The `enriched-tree.json` is the main file containing all node data with bound variables enriched with token names and values.
 
 ---
 
-## 🔄 Next: Split Large Node Files
+## ✅ Post-Extraction Validation
 
-If `node-tree.json` is large (>1000 lines), split it for easier processing:
-
-```bash
-python3 .agent/skills/figma-analysis/scripts/split_node_data.py figma-agent/data/node-tree.json --max-lines 250
-```
-
-This creates `node-tree-split/` with organized sections.
-
----
-
-## ✅ Post-Sync Validation
-
-After sync completes, verify the following:
+After extraction completes, verify the following:
 
 ### Files Created
 
-- [ ] `figma-agent/data/` directory populated with JSON files
-- [ ] At least one `*node.json` file exists
-- [ ] Optional files created (components.json, styles.json, tokens.json)
-- [ ] Split directories created (`*-split/` folders with sections/)
+- [ ] `.figma-debug/enriched-tree.json` exists (main output)
+- [ ] `.figma-debug/node-tree-raw.json` exists (raw data)
+- [ ] `.figma-debug/variables.json` exists (if Enterprise)
+- [ ] `.figma-debug/styles.json` exists
+- [ ] `.figma-debug/components.json` exists
 
 ### Validation Checklist
 
 - [ ] All JSON files are valid (no parse errors)
-- [ ] No duplicate files
-- [ ] Split data organized in sections/
-- [ ] Summary files (00-\*.json) exist
-- [ ] Total line count > 1000
-- [ ] Token/color files present
+- [ ] `enriched-tree.json` contains bound variables with token mappings
+- [ ] Variable IDs are mapped to token names and values
+- [ ] Component instances have component references
+- [ ] Node tree has no truncation (full hierarchy)
 
 ---
 
-## 🎯 Next Steps: Build the UI
+## 🎯 Next Steps: Use the Data
 
-**After completing sync and validation:**
+**After completing extraction:**
 
-1. ✅ Data synced and split
-2. ✅ Directory structure verified
-3. ➡️ **Proceed to [figma-build.md](figma-build.md) workflow**
+1. ✅ Data extracted and available in `.figma-debug/`
+2. ✅ Use `enriched-tree.json` for further processing
+3. ➡️ **Copy data to `figma-agent/data/` for build workflows**

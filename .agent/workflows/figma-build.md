@@ -24,7 +24,6 @@ This workflow converts your synced Figma design data into production-ready React
 ### 1. Data Processing Standards (New ⭐)
 
 - **Large File Detection**: Automatically check if JSON files exceed 1000 lines.
-- **Recursive Splitting**: Use `split_node_data.py` to break large files into manageable chunks (200-300 lines).
 - **Context Prioritization**: Always prioritize reading split files (`summary.json`, `sections/*.json`) over raw monolithic files.
 - **Code Conversion Principles**: Must follow strict rules for scanning, dynamic ID linking, and recursive priority as defined in the `code-conversion-principles` skill.
 

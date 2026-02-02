@@ -1,53 +1,57 @@
-# 🚀 Quick Reference: Split Figma Files
+# 🚀 Quick Reference: Extract Figma Data
 
 ## One-liner
 
 ```bash
-python3 .agent/skills/figma-analysis/scripts/split_node_data.py figma-agent/data/<file>.json --max-lines 250
+node .agent/skills/figma-analysis/scripts/figma-extract.mjs
 ```
 
-## Options
+## Configuration
 
-```bash
---max-lines 200   # Smaller files
---max-lines 250   # Recommended ⭐
---max-lines 300   # Larger files
---output-dir path # Custom output
+Edit `figma-extract.mjs`:
+
+```javascript
+const FIGMA_FILE_KEY = "your_file_key"; // Your design file
+const TARGET_NODE_ID = "52:184"; // The node to extract
+const ICON_NODE_IDS = []; // Optional icons
+```
+
+Set token in `.env.figma`:
+
+```
+FIGMA_TOKEN=your_token_here
 ```
 
 ## Output
 
 ```
-<file>-split/
-├── 00-summary.json      # Start here ⭐
-├── 01-structure.json    # Hierarchy
-├── 02-texts.json        # All text
-├── sections/*.json      # 200-300 lines each
-└── 99-full-tree.json    # Full data
+.figma-debug/
+├── enriched-tree.json      # Main output ⭐
+├── node-tree-raw.json      # Raw data
+├── variables.json          # Tokens
+├── styles.json             # Styles
+└── components.json         # Components
 ```
 
-## AI Reading Order
+## Features
 
-1. `00-summary.json` → Overview
-2. `01-structure.json` → Plan
-3. `02-texts.json` → Copy
-4. `sections/*.json` → Build (one by one)
-5. `99-full-tree.json` → Only if needed
-
-## When to use
-
-- ✅ File > 1000 lines
-- ✅ AI build accuracy < 50%
-- ✅ Need organized data
-- ✅ Multiple sections
+- ✅ Full node tree (no truncation)
+- ✅ Variables API (Design Tokens)
+- ✅ Styles API (Typography)
+- ✅ Components API (metadata)
+- ✅ Images export (icons)
+- ✅ Bound variables enriched with token names
 
 ## Results
 
-- Before: 3314 lines → 10% accuracy
-- After: 35 files (22-250 lines) → 95% accuracy
+- Full hierarchy extraction
+- Token mapping included
+- Enterprise Variables support
+- No data loss or truncation
 
 ## Docs
 
 - Full guide: `figma-agent/FINAL-SOLUTION.md`
-- Workflow: `.agent/workflows/figma-split-data.md`
-- Script: `.agent/skills/figma-analysis/scripts/split_node_data.py`
+- Workflow: `.agent/workflows/sync-figma-data.md`
+- Build Guide: `.agent/workflows/figma-build.md`
+- Script: `.agent/skills/figma-analysis/scripts/figma-extract.mjs`

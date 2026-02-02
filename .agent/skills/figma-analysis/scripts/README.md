@@ -1,154 +1,102 @@
 # Figma Analysis Scripts - Setup Guide
 
-This directory contains Python scripts for advanced Figma metadata extraction and querying.
+This directory contains Node.js scripts for deep Figma data extraction and analysis.
 
 ## 📋 Prerequisites
 
-- **Python**: Version 3.9 or higher
+- **Node.js**: Version 14 or higher
 - **Figma Personal Access Token**: Required for API access
 
-### 🐍 How to Install Python
+### 🚀 How to Install Node.js
 
 **macOS** (using Homebrew):
 
 ```bash
-brew install python
+brew install node
 ```
 
 **Windows**:
-Download the installer from [python.org](https://www.python.org/downloads/windows/). Make sure to check **"Add Python to PATH"** during installation.
+Download the installer from [nodejs.org](https://nodejs.org/). Choose the LTS version.
 
 **Linux (Ubuntu/Debian)**:
 
 ```bash
 sudo apt update
-sudo apt install python3 python3-pip
+sudo apt install nodejs npm
 ```
 
 ## 🚀 Quick Setup
 
-### Step 1: Install Python Dependencies
+### Step 1: Configure Figma Access Token
+
+Create a `.env.figma` file in the project root:
 
 ```bash
-pip install python-dotenv requests
+touch .env.figma
 ```
 
-Or if you're using `pip3`:
+Add your token:
+
+```env
+FIGMA_TOKEN=your_personal_access_token_here
+```
+
+**Security**: Add to `.gitignore`:
 
 ```bash
-pip3 install python-dotenv requests
+echo ".env.figma" >> .gitignore
 ```
 
-### Step 2: Configure Figma Access Token
-
-You have **3 options** to provide your Figma token:
-
-#### Option 1: Project `.env` File (Recommended)
-
-1. Create a `.env` file in your **project root**:
-
-   ```bash
-   touch .env
-   ```
-
-2. Add your token to `.env`:
-
-   ```env
-   FIGMA_ACCESS_TOKEN=your_personal_access_token_here
-   ```
-
-3. **Security**: Add `.env` to `.gitignore`:
-   ```bash
-   echo ".env" >> .gitignore
-   ```
-
-#### Option 2: System Environment Variable
-
-**macOS/Linux** (permanent):
-
-```bash
-# Add to ~/.zshrc or ~/.bashrc
-echo 'export FIGMA_ACCESS_TOKEN="your_token_here"' >> ~/.zshrc
-source ~/.zshrc
-```
-
-**macOS/Linux** (temporary, current session only):
-
-```bash
-export FIGMA_ACCESS_TOKEN="your_token_here"
-```
-
-#### Option 3: Command-line Argument
-
-Pass the token directly when running scripts:
-
-```bash
-python3 fetch_figma_metadata.py "FIGMA_URL" --token "your_token_here"
-```
-
-### Step 3: Get Your Figma Personal Access Token
+### Step 2: Get Your Figma Personal Access Token
 
 1. Open Figma and go to **Settings** (click your profile picture)
 2. Scroll to **Personal access tokens**
 3. Click **Generate new token**
 4. Give it a name (e.g., "Figma Agent Tool")
 5. **Copy the token** (it only shows once!)
-6. Paste it into your `.env` file or environment variable
-
-**Required Scopes:**
-
-- `file_content:read` - For reading file data
-- `file_metadata:read` - For file metadata
-- `library_content:read` - For components and styles
+6. Paste it into your `.env.figma` file
 
 ## 📝 Available Scripts
 
-### 1. `fetch_figma_metadata.py`
+### 1. `figma-extract.mjs` (⭐ Main Script)
 
-Fetches comprehensive metadata from a Figma file.
+Deep extraction of Figma nodes with token mapping.
+
+**Features:**
+
+- ✅ Full node tree extraction (no truncation)
+- ✅ Variables API (Design Tokens - Enterprise)
+- ✅ Styles API (Typography & Effects)
+- ✅ Components API (metadata)
+- ✅ Images export (SVG icons)
+- ✅ Bound variables enriched with token names
+
+**Configuration:**
+
+Edit `figma-extract.mjs` and set these values:
+
+```javascript
+const FIGMA_FILE_KEY = "i2JD5CfMgttyQqmDY5v72Z"; // Your design file
+const TARGET_NODE_ID = "52:184"; // Node to extract
+const ICON_NODE_IDS = []; // Optional: IDs to export as SVG
+```
 
 **Usage:**
 
 ```bash
-# Using .env token
-python3 fetch_figma_metadata.py "https://www.figma.com/design/YOUR_FILE_KEY/..."
-
-# Using command-line token
-python3 fetch_figma_metadata.py "YOUR_FILE_KEY" --token "your_token"
-
-# Custom output location
-python3 fetch_figma_metadata.py "YOUR_FILE_KEY" --output custom/path/metadata.json
+node figma-extract.mjs
 ```
 
-**Output:** `figma-agent/common/file-metadata.json` (by default)
+**Output:** `.figma-debug/`
 
-### 2. `query_metadata.py`
+- `enriched-tree.json` - Main output with token mappings
+- `node-tree-raw.json` - Raw API response
+- `variables.json` - Design tokens
+- `styles.json` - Styles metadata
+- `components.json` - Components metadata
+- `icons-urls.json` - Icon URLs (if configured)
 
-Efficiently query metadata without loading the entire file.
-
-**Usage:**
-
-```bash
-# Get summary
-python3 query_metadata.py summary
-
-# Search components
-python3 query_metadata.py components --search "button"
-
-# Filter styles by type
-python3 query_metadata.py styles --type TEXT
-
-# Get component details
-python3 query_metadata.py component "Primary Button"
-
-# Get style details (basic)
-python3 query_metadata.py style "Heading 1"
-
-# Get style details (with API fetch for full CSS properties)
-python3 query_metadata.py style "Heading 1" --fetch-api
-```
-
-### 3. `init-figma-agents.js`
+### 2. `init-figma-agents.js`
 
 Initializes directory structure for a new page/section.
 
@@ -166,46 +114,48 @@ node init-figma-agents.js landing-page hero-section
 Test if everything is set up correctly:
 
 ```bash
-# Check Python version
-python3 --version  # Should be 3.9+
+# Check Node version
+node --version  # Should be 14+
 
-# Check if packages are installed
-pip3 list | grep -E "requests|python-dotenv"
+# Check if token file exists
+cat .env.figma | grep FIGMA_TOKEN
 
-# Check if token is accessible
-python3 -c "import os; from dotenv import load_dotenv; load_dotenv(); print('Token found!' if os.getenv('FIGMA_ACCESS_TOKEN') else 'Token NOT found')"
+# Test fetch
+node -e "console.log('Node.js works!')"
 ```
 
 ## ⚠️ Troubleshooting
 
-### "pip: command not found"
+### "command not found: node"
 
-Try using `pip3` instead of `pip`.
+- Reinstall Node.js from [nodejs.org](https://nodejs.org/)
+- On macOS with Homebrew: `brew install node`
+- Make sure Node is in your PATH
 
-### "ModuleNotFoundError: No module named 'dotenv'"
+### "FIGMA_TOKEN not found" or "401 Unauthorized"
 
-Install the package:
+- Verify `.env.figma` exists in project root
+- Check token is correct (copy from Figma Settings again)
+- Ensure `.env.figma` format: `FIGMA_TOKEN=token_here` (no spaces)
 
-```bash
-pip3 install python-dotenv
-```
+### "Request failed" or "403 Forbidden"
 
-### "Access denied" or "403 Forbidden"
-
-- Check if your token is correct
+- Token may have expired - generate a new one
 - Verify the Figma file is accessible with your account
-- Ensure your token has the required scopes
+- Check your internet connection
 
-### Token not being read from `.env`
+### Script timeout or hangs
 
-- Make sure `.env` is in the **project root** (same level as `figma-agent/`)
-- Check there are no extra spaces: `FIGMA_ACCESS_TOKEN=token` (not `= token`)
-- Verify the file is named exactly `.env` (not `.env.txt`)
+- File may be very large - be patient, extraction takes time
+- Check console output for progress messages
+- Ctrl+C to stop and check logs
 
 ## 📚 Additional Resources
 
 - [Figma REST API Documentation](https://developers.figma.com/docs/rest-api/)
 - [How to get a Figma Personal Access Token](https://help.figma.com/hc/en-us/articles/8085703771159-Manage-personal-access-tokens)
+- [Workflow Guide](../../workflows/sync-figma-data.md)
+- [Build Guide](../../workflows/figma-build.md)
 
 ---
 

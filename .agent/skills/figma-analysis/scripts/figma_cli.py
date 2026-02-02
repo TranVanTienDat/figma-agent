@@ -91,10 +91,8 @@ def sync_all_sequential(client, file_key, node_ids, output_dir, image_format='sv
     if results["images"]:
         _save_json(os.path.join(output_dir, "images-manifest.json"), results["images"])
     
-    # Save summary
+    # Count completed steps
     completed = sum(1 for d, _ in mappings if d)
-    summary = {"status": "complete", "completed_steps": completed, "total_steps": 5}
-    _save_json(os.path.join(output_dir, "sync-summary.json"), summary)
     
     print(f"\n✨ Sync Complete! {completed}/5 steps completed.\n")
     return results

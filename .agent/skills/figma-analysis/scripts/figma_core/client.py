@@ -95,12 +95,6 @@ class FigmaClient:
         """
         return self._request("GET", f"/files/{file_key}/components")
 
-    # Legacy method support
-    def get_file(self, file_key, depth=None):
-        params = {}
-        if depth: params['depth'] = depth
-        return self._request("GET", f"/files/{file_key}", params=params)
-
     def get_published_components(self, file_key):
         return self.get_file_components(file_key)
 
